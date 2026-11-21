@@ -469,6 +469,19 @@ if (qs.includes('demo=')) {
   const chip = document.querySelector(`.example-chip[data-example="${Math.min(idx, 2)}"]`);
   if (chip) { chip.click(); setTimeout(runCheck, 400); }
 }
+/* 静态画板导出参数（供墨刀导入与截图使用） */
+if (qs.includes('fill=')) {
+  const fi = parseInt(qs.split('fill=')[1]) || 0;
+  const chip = document.querySelector(`.example-chip[data-example="${Math.min(fi, 2)}"]`);
+  if (chip) chip.click();
+}
+if (qs.includes('checking=1')) {
+  document.querySelector('.check-card').style.display = 'none';
+  checkingPanel.style.display = 'block';
+  const steps = document.querySelectorAll('.step');
+  steps[0].classList.add('done'); steps[1].classList.add('current');
+  document.getElementById('checking-tip').textContent = checkingTips[1];
+}
 </script>
 </body>
 </html>
