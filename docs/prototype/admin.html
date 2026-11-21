@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactLens 管理后台（原型）</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<!-- ================= 登录页 ================= -->
+<div class="admin-login" id="login-view">
+  <div class="card login-card">
+    <a class="logo" style="display:flex">
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none">
+        <defs><linearGradient id="lg2" x1="0" y1="0" x2="48" y2="48">
+          <stop offset="0" stop-color="#0F766E"/><stop offset="1" stop-color="#14B8A6"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="22" fill="url(#lg2)"/>
+        <circle cx="19" cy="19" r="8.5" stroke="#fff" stroke-width="3.4" fill="none"/>
+        <line x1="25.5" y1="25.5" x2="33" y2="33" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>
+        <path d="M15.5 19.5 l2.6 2.6 5-5.6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      FactLens 管理后台
+    </a>
+    <p class="login-sub">AI 多领域虚假信息鉴别智能体 · 运维与管理</p>
+    <div class="form-item">
+      <label>管理员账号</label>
+      <input type="text" id="login-user" placeholder="请输入管理员账号" value="admin">
+    </div>
+    <div class="form-item">
+      <label>密码</label>
+      <input type="password" id="login-pass" placeholder="请输入密码" value="factlens2026">
+    </div>
+    <button class="btn btn-primary" id="btn-login">登 录</button>
+    <div class="login-tip">原型演示：点击登录即可进入（迭代二接入服务端鉴权接口）</div>
+  </div>
+</div>
+
+<!-- ================= 主界面 ================= -->
+<div class="admin-shell" id="admin-shell" style="display:none">
+  <aside class="admin-sidebar">
+    <div class="logo">
+      <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
+        <defs><linearGradient id="lg3" x1="0" y1="0" x2="48" y2="48">
+          <stop offset="0" stop-color="#0F766E"/><stop offset="1" stop-color="#14B8A6"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="22" fill="url(#lg3)"/>
+        <circle cx="19" cy="19" r="8.5" stroke="#fff" stroke-width="3.4" fill="none"/>
+        <line x1="25.5" y1="25.5" x2="33" y2="33" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>
+        <path d="M15.5 19.5 l2.6 2.6 5-5.6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      FactLens<span class="tag">管理后台</span>
+    </div>
+    <ul class="side-menu">
+      <li><a href="#overview" data-nav="overview"><i class="mi">📊</i>数据概览</a></li>
+      <li><a href="#records" data-nav="records"><i class="mi">🧾</i>核查记录</a></li>
+      <li><a href="#sources" data-nav="sources"><i class="mi">🌐</i>证据源管理</a></li>
+      <li><a href="#config" data-nav="config"><i class="mi">⚙️</i>系统配置</a></li>
+    </ul>
+    <div class="side-footer">
+      <div class="who">👤 admin（超级管理员）</div>
+      <div>v1.0.0 · 迭代二设计稿</div>
+      <div style="margin-top:8px"><a href="#" id="btn-logout" style="color:#5eead4">退出登录 →</a></div>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <h1 id="topbar-title">数据概览</h1>
+      <span class="crumb" id="topbar-crumb">Home / 数据概览</span>
+    </header>
+
+    <div class="admin-content">
+      <!-- ============ 视图：数据概览 ============ -->
+      <section class="admin-page" id="page-overview">
+        <div class="stat-row">
+          <div class="card stat-card">
+            <div class="ico ico-teal">🔍</div>
+            <div><div class="num">128</div><div class="lbl">今日核查次数</div><div class="trend up">▲ 12.3% 较昨日</div></div>
+          </div>
+          <div class="card stat-card">
+            <div class="ico ico-blue">🗂</div>
+            <div><div class="num">3,452</div><div class="lbl">累计核查次数</div><div class="trend up">▲ 上线以来持续增长</div></div>
+          </div>
+          <div class="card stat-card">
+            <div class="ico ico-green">🤖</div>
+            <div><div class="num">76%</div><div class="lbl">模型判定占比</div><div class="trend down">▼ 无密钥时段自动降级</div></div>
+          </div>
+          <div class="card stat-card">
+            <div class="ico ico-amber">⏱</div>
+            <div><div class="num">8.6s</div><div class="lbl">平均核查耗时</div><div class="trend up">▲ 检索并行化后 -31%</div></div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="card panel">
+            <h2>近 7 日核查量趋势</h2>
+            <svg viewBox="0 0 560 220" width="100%" height="220" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="areaG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#14B8A6" stop-opacity=".28"/>
+                  <stop offset="1" stop-color="#14B8A6" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <g stroke="#e2e8f0" stroke-width="1">
+                <line x1="40" y1="20" x2="40" y2="180"/><line x1="40" y1="180" x2="540" y2="180"/>
+                <line x1="40" y1="100" x2="540" y2="100" stroke-dasharray="4 4"/><line x1="40" y1="60" x2="540" y2="60" stroke-dasharray="4 4"/>
+                <line x1="40" y1="140" x2="540" y2="140" stroke-dasharray="4 4"/>
+              </g>
+              <polygon points="40,152 123,120 206,132 289,86 372,96 455,58 540,64 540,180 40,180" fill="url(#areaG)"/>
+              <polyline points="40,152 123,120 206,132 289,86 372,96 455,58 540,64" fill="none" stroke="#0F766E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+              <g fill="#0F766E">
+                <circle cx="40" cy="152" r="4.5"/><circle cx="123" cy="120" r="4.5"/><circle cx="206" cy="132" r="4.5"/><circle cx="289" cy="86" r="4.5"/><circle cx="372" cy="96" r="4.5"/><circle cx="455" cy="58" r="4.5"/><circle cx="540" cy="64" r="4.5"/>
+              </g>
+              <g fill="#64748b" font-size="12" text-anchor="middle">
+                <text x="40" y="198">11-15</text><text x="123" y="198">11-16</text><text x="206" y="198">11-17</text><text x="289" y="198">11-18</text><text x="372" y="198">11-19</text><text x="455" y="198">11-20</text><text x="540" y="198">11-21</text>
+              </g>
+              <g fill="#94a3b8" font-size="11" text-anchor="end">
+                <text x="34" y="184">0</text><text x="34" y="144">250</text><text x="34" y="104">500</text><text x="34" y="64">750</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card panel">
+            <h2>结论分布（近 30 天）</h2>
+            <div style="display:flex;justify-content:center;align-items:center">
+              <svg width="170" height="170" viewBox="0 0 170 170">
+                <circle cx="85" cy="85" r="62" fill="none" stroke="#e2e8f0" stroke-width="26"/>
+                <circle cx="85" cy="85" r="62" fill="none" stroke="#15803d" stroke-width="26"
+                  stroke-dasharray="155 390" stroke-dashoffset="0" transform="rotate(-90 85 85)"/>
+                <circle cx="85" cy="85" r="62" fill="none" stroke="#475569" stroke-width="26"
+                  stroke-dasharray="97 390" stroke-dashoffset="-155" transform="rotate(-90 85 85)"/>
+                <circle cx="85" cy="85" r="62" fill="none" stroke="#b45309" stroke-width="26"
+                  stroke-dasharray="78 390" stroke-dashoffset="-252" transform="rotate(-90 85 85)"/>
+                <circle cx="85" cy="85" r="62" fill="none" stroke="#b91c1c" stroke-width="26"
+                  stroke-dasharray="60 390" stroke-dashoffset="-330" transform="rotate(-90 85 85)"/>
+                <text x="85" y="80" text-anchor="middle" font-size="24" font-weight="800" fill="#0f172a">3452</text>
+                <text x="85" y="100" text-anchor="middle" font-size="12" fill="#64748b">总核查</text>
+              </svg>
+            </div>
+            <div class="donut-legend">
+              <div class="lg"><span class="sw" style="background:#15803d"></span>确认属实<span class="v">39.7%</span></div>
+              <div class="lg"><span class="sw" style="background:#475569"></span>暂无法核实<span class="v">24.9%</span></div>
+              <div class="lg"><span class="sw" style="background:#b45309"></span>部分属实<span class="v">20.0%</span></div>
+              <div class="lg"><span class="sw" style="background:#b91c1c"></span>确认不实<span class="v">15.4%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card panel">
+          <h2>最近核查记录</h2>
+          <div class="table-wrap">
+            <table class="data">
+              <thead><tr><th>ID</th><th>核查时间</th><th>原文（截断）</th><th>结论</th><th>断言数</th><th>判定方式</th><th>操作</th></tr></thead>
+              <tbody id="recent-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 视图：核查记录 ============ -->
+      <section class="admin-page" id="page-records" style="display:none">
+        <div class="card panel">
+          <div class="filter-bar">
+            <select id="f-conclusion">
+              <option value="">全部结论</option>
+              <option value="true">确认属实</option>
+              <option value="partial">部分属实</option>
+              <option value="false">确认不实</option>
+              <option value="unknown">暂无法核实</option>
+            </select>
+            <input type="text" id="f-keyword" placeholder="搜索原文关键词…">
+            <button class="btn btn-primary btn-sm" id="btn-search">查询</button>
+            <span class="muted" style="margin-left:auto" id="records-count"></span>
+          </div>
+          <div class="table-wrap">
+            <table class="data">
+              <thead><tr><th>ID</th><th>核查时间</th><th>原文（截断）</th><th>结论</th><th>断言</th><th>来源</th><th>判定方式</th><th>操作</th></tr></thead>
+              <tbody id="records-tbody"></tbody>
+            </table>
+          </div>
+          <div class="pager">
+            <span>共 138 条</span>
+            <button class="pg">&lt;</button><button class="pg cur">1</button><button class="pg">2</button><button class="pg">3</button><button class="pg">…</button><button class="pg">7</button><button class="pg">&gt;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 视图：证据源管理 ============ -->
+      <section class="admin-page" id="page-sources" style="display:none">
+        <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+          <div class="card stat-card"><div class="ico ico-green">✅</div><div><div class="num">26</div><div class="lbl">高权威源（gov.cn / 官方媒体）</div></div></div>
+          <div class="card stat-card"><div class="ico ico-amber">📰</div><div><div class="num">41</div><div class="lbl">一般可信源（百科 / 专业媒体）</div></div></div>
+          <div class="card stat-card"><div class="ico ico-red" style="background:var(--red-bg);color:var(--red)">🚫</div><div><div class="num">7</div><div class="lbl">黑名单源（已知谣言站点）</div></div></div>
+        </div>
+        <div class="card panel">
+          <div class="filter-bar">
+            <h2 style="margin:0;font-size:15.5px">证据源注册表</h2>
+            <input type="text" id="s-keyword" placeholder="搜索域名…">
+            <button class="btn btn-primary btn-sm" id="btn-add-source" style="margin-left:auto">＋ 新增证据源</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data">
+              <thead><tr><th>域名</th><th>类别</th><th>权威等级</th><th>状态</th><th>备注</th><th>更新时间</th><th>操作</th></tr></thead>
+              <tbody id="sources-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 视图：系统配置 ============ -->
+      <section class="admin-page" id="page-config" style="display:none">
+        <div class="config-grid">
+          <div class="card panel">
+            <h2>🤖 大模型配置（OpenAI 兼容接口）</h2>
+            <div class="form-item"><label>接口地址 LLM_BASE_URL</label><input value="https://open.bigmodel.cn/api/paas/v4"></div>
+            <div class="form-item"><label>模型名称 LLM_MODEL</label><input value="glm-4.7-flash"></div>
+            <div class="form-item"><label>API 密钥 LLM_API_KEY</label>
+              <div style="display:flex;gap:8px">
+                <input type="password" id="cfg-key" value="sk-xxxxxxxxxxxxxxxx">
+                <button class="btn btn-ghost btn-sm" id="btn-eye">👁 显示</button>
+              </div>
+            </div>
+            <div class="form-item"><label>采样温度（判定用）</label><input value="0.2"></div>
+          </div>
+          <div class="card panel">
+            <h2>🔎 检索参数</h2>
+            <div class="form-item"><label>每条断言的检索结果数</label><input value="4"></div>
+            <div class="form-item"><label>检索超时（秒）</label><input value="20"></div>
+            <div class="form-item"><label>LLM 调用超时（秒）</label><input value="60"></div>
+            <div class="form-item"><label>原文最大长度（字）</label><input value="2000"></div>
+          </div>
+          <div class="card panel wide">
+            <h2>💓 服务状态</h2>
+            <div class="kv"><span class="k">接口地址</span><span class="v">factlens.pythonanywhere.com</span></div>
+            <div class="kv"><span class="k">健康检查 /api/health</span><span class="v"><span class="health-ok"><span class="badge-dot"></span>运行正常</span></span></div>
+            <div class="kv"><span class="k">模型可用性 used_llm</span><span class="v">true（已配置密钥）</span></div>
+            <div class="kv"><span class="k">当前模型</span><span class="v">glm-4.7-flash</span></div>
+            <div class="kv"><span class="k">最近检查</span><span class="v">2026-11-21 20:36（约 30 秒前）</span></div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+              <button class="btn btn-ghost btn-sm" id="btn-ping">↻ 重新检查</button>
+              <button class="btn btn-primary btn-sm" id="btn-save-config">💾 保存配置</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认弹窗 -->
+<div class="mask" id="confirm-mask">
+  <div class="modal" style="width:380px">
+    <h3>删除确认</h3>
+    <p class="muted" id="confirm-text">确定要删除这条核查记录吗？删除后不可恢复。</p>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="confirm-cancel">取消</button>
+      <button class="btn btn-primary" id="confirm-ok" style="background:#b91c1c">删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- 证据源新增/编辑弹窗 -->
+<div class="mask" id="source-mask">
+  <div class="modal">
+    <h3 id="source-modal-title">新增证据源</h3>
+    <div class="form-item"><label>域名</label><input id="sm-domain" placeholder="例如 piyao.org.cn"></div>
+    <div class="form-item"><label>类别</label>
+      <select id="sm-category">
+        <option>官方政府</option><option>官方媒体</option><option>医疗机构</option><option>百科</option><option>专业媒体</option><option>谣言站点</option>
+      </select>
+    </div>
+    <div class="form-item"><label>权威等级</label>
+      <div class="radio-row">
+        <label><input type="radio" name="lv" value="3" checked>高（判定加权）</label>
+        <label><input type="radio" name="lv" value="2">中（参考）</label>
+        <label><input type="radio" name="lv" value="1">低（弱参考）</label>
+        <label><input type="radio" name="lv" value="0">黑名单（排除）</label>
+      </div>
+    </div>
+    <div class="form-item"><label>状态</label>
+      <div class="radio-row">
+        <label><input type="radio" name="st" value="1" checked>启用</label>
+        <label><input type="radio" name="st" value="0">停用</label>
+      </div>
+    </div>
+    <div class="form-item"><label>备注</label><input id="sm-note" placeholder="选填"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="source-cancel">取消</button>
+      <button class="btn btn-primary" id="source-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 记录详情抽屉 -->
+<div class="drawer" id="detail-drawer">
+  <div class="drawer-head">
+    <h3>核查记录详情</h3>
+    <button class="drawer-close" id="drawer-close">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 模拟数据 ================= */
+const SOURCES = [
+  { domain: 'gov.cn', category: '官方政府', level: 3, on: true, note: '国家部委及地方政府网站', time: '2026-11-18 10:24' },
+  { domain: 'piyao.org.cn', category: '官方政府', level: 3, on: true, note: '中国互联网联合辟谣平台', time: '2026-11-18 10:25' },
+  { domain: 'who.int', category: '国际组织', level: 3, on: true, note: '世界卫生组织官网', time: '2026-11-18 10:25' },
+  { domain: 'chinacdc.cn', category: '官方政府', level: 3, on: true, note: '中国疾病预防控制中心', time: '2026-11-18 10:26' },
+  { domain: 'people.com.cn', category: '官方媒体', level: 3, on: true, note: '人民日报', time: '2026-11-18 10:26' },
+  { domain: 'xinhuanet.com', category: '官方媒体', level: 3, on: true, note: '新华网', time: '2026-11-18 10:27' },
+  { domain: 'pumch.cn', category: '医疗机构', level: 3, on: true, note: '北京协和医院', time: '2026-11-18 10:27' },
+  { domain: 'zh.wikipedia.org', category: '百科', level: 2, on: true, note: '中文维基百科（可复核引用）', time: '2026-11-19 15:02' },
+  { domain: 'baike.baidu.com', category: '百科', level: 2, on: true, note: '百度百科', time: '2026-11-19 15:03' },
+  { domain: 'dxy.com', category: '专业媒体', level: 2, on: true, note: '丁香医生', time: '2026-11-19 15:04' },
+  { domain: 'zhihu.com', category: '社区', level: 1, on: true, note: '社区问答，仅作弱参考', time: '2026-11-20 09:11' },
+  { domain: 'xxx-news-fake.example', category: '谣言站点', level: 0, on: true, note: '多次传播不实信息，列入黑名单', time: '2026-11-20 09:12' }
+];
+const RECORDS = [
+  { id: 3452, time: '2026-11-21 20:14', text: '地球是太阳系的一颗行星。', conclusion: '确认属实', type: 'true', claims: 1, sources: 3, llm: true },
+  { id: 3451, time: '2026-11-21 20:02', text: '多喝热水能治感冒，感冒吃抗生素好得快。', conclusion: '部分属实', type: 'partial', claims: 2, sources: 4, llm: true },
+  { id: 3450, time: '2026-11-21 19:47', text: '手机辐射会导致脑癌，睡觉时手机放床头很危险。', conclusion: '确认不实', type: 'false', claims: 2, sources: 4, llm: false },
+  { id: 3449, time: '2026-11-21 19:21', text: '喝醋能软化血管，每天一杯醋远离心脑血管疾病。', conclusion: '暂无法核实', type: 'unknown', claims: 1, sources: 2, llm: true },
+  { id: 3448, time: '2026-11-21 18:55', text: '2026 年 11 月起个人养老金制度全面实施。', conclusion: '确认属实', type: 'true', claims: 1, sources: 3, llm: true },
+  { id: 3447, time: '2026-11-21 18:30', text: '每天走一万步是健康的最低标准，少于一万步没有锻炼效果。', conclusion: '部分属实', type: 'partial', claims: 2, sources: 4, llm: true },
+  { id: 3446, time: '2026-11-21 17:58', text: '吃榴莲后喝可乐会中毒。', conclusion: '确认不实', type: 'false', claims: 1, sources: 3, llm: false },
+  { id: 3445, time: '2026-11-21 17:12', text: '广州地铁 2026 年底前将新增 5 条线路。', conclusion: '暂无法核实', type: 'unknown', claims: 1, sources: 1, llm: true }
+];
+const LV_BADGE = { 3: 'badge-true', 2: 'badge-partial', 1: 'badge-unknown', 0: 'badge-false' };
+const LV_TEXT = { 3: '高', 2: '中', 1: '低', 0: '黑名单' };
+const CAT_TEXT = { true: '确认属实', partial: '部分属实', false: '确认不实', unknown: '暂无法核实' };
+const TITLES = { overview: '数据概览', records: '核查记录', sources: '证据源管理', config: '系统配置' };
+const CRUMBS = { overview: 'Home / 数据概览', records: 'Home / 核查记录', sources: 'Home / 证据源管理', config: 'Home / 系统配置' };
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function row(r, withActions) {
+  const llmBadge = r.llm ? '<span class="badge badge-llm">模型</span>' : '<span class="badge badge-rule">降级</span>';
+  const acts = withActions
+    ? `<button class="btn btn-ghost btn-sm" data-detail="${r.id}">详情</button>
+       <button class="btn btn-danger btn-sm" data-del="${r.id}">删除</button>`
+    : `<button class="btn btn-ghost btn-sm" data-detail="${r.id}">详情</button>`;
+  return `<tr>
+    <td class="cell-main">#${r.id}</td>
+    <td>${r.time}</td>
+    <td><div class="text-clip">${r.text}</div></td>
+    <td><span class="badge badge-${r.type}"><span class="badge-dot"></span>${r.conclusion}</span></td>
+    <td>${r.claims}</td>
+    ${withActions ? `<td>${r.sources}</td>` : ''}
+    <td>${llmBadge}</td>
+    <td>${acts}</td>
+  </tr>`;
+}
+function renderRecords(filter = {}) {
+  let list = RECORDS.slice();
+  if (filter.conclusion) list = list.filter(r => r.type === filter.conclusion);
+  if (filter.keyword) list = list.filter(r => r.text.includes(filter.keyword));
+  document.getElementById('records-tbody').innerHTML = list.map(r => row(r, true)).join('');
+  document.getElementById('records-count').textContent = `当前显示 ${list.length} / 138 条`;
+  document.getElementById('recent-tbody').innerHTML = RECORDS.slice(0, 5).map(r => row(r, false)).join('');
+}
+function renderSources(keyword = '') {
+  const list = SOURCES.filter(s => !keyword || s.domain.includes(keyword));
+  document.getElementById('sources-tbody').innerHTML = list.map((s, i) => `
+    <tr>
+      <td class="cell-main">${s.domain}</td>
+      <td>${s.category}</td>
+      <td><span class="badge ${LV_BADGE[s.level]}">${LV_TEXT[s.level]}</span></td>
+      <td><label class="switch"><input type="checkbox" ${s.on ? 'checked' : ''} data-sw="${i}"><span class="sl"></span></label></td>
+      <td><div class="text-clip" style="max-width:220px">${s.note}</div></td>
+      <td>${s.time}</td>
+      <td><button class="btn btn-ghost btn-sm" data-edit="${i}">编辑</button>
+          <button class="btn btn-danger btn-sm" data-del-src="${i}">删除</button></td>
+    </tr>`).join('');
+}
+
+/* ================= 路由 ================= */
+function adminRoute() {
+  if (!localStorage.getItem('factlens_admin_login')) { location.hash = ''; return; }
+  const h = location.hash.replace('#', '') || 'overview';
+  if (h === 'login') return;
+  const key = TITLES[h] ? h : 'overview';
+  document.querySelectorAll('.admin-page').forEach(p => p.style.display = 'none');
+  document.getElementById('page-' + key).style.display = 'block';
+  document.querySelectorAll('.side-menu a').forEach(a => a.classList.toggle('active', a.dataset.nav === key));
+  document.getElementById('topbar-title').textContent = TITLES[key];
+  document.getElementById('topbar-crumb').textContent = CRUMBS[key];
+}
+window.addEventListener('hashchange', adminRoute);
+
+/* ================= 登录 ================= */
+function applyAuth() {
+  const logged = !!localStorage.getItem('factlens_admin_login');
+  document.getElementById('login-view').style.display = logged ? 'none' : 'flex';
+  document.getElementById('admin-shell').style.display = logged ? 'flex' : 'none';
+  if (logged) adminRoute();
+}
+// 原型演示参数：admin.html#overview?demo=1 自动登录（用于在线演示与截图）
+if (location.hash.includes('demo=1') && !localStorage.getItem('factlens_admin_login')) {
+  localStorage.setItem('factlens_admin_login', '1');
+}
+document.getElementById('btn-login').addEventListener('click', () => {
+  localStorage.setItem('factlens_admin_login', '1');
+  applyAuth(); location.hash = '#overview';
+  toast('✅ 登录成功（原型演示）');
+});
+document.getElementById('btn-logout').addEventListener('click', e => {
+  e.preventDefault();
+  localStorage.removeItem('factlens_admin_login');
+  location.hash = '';
+  applyAuth();
+  toast('已退出登录');
+});
+
+/* ================= 概览 / 记录 ================= */
+document.getElementById('btn-search').addEventListener('click', () => renderRecords({
+  conclusion: document.getElementById('f-conclusion').value,
+  keyword: document.getElementById('f-keyword').value.trim()
+}));
+document.getElementById('records-tbody').addEventListener('click', e => {
+  const d = e.target.closest('[data-detail]'), del = e.target.closest('[data-del]');
+  if (d) openDrawer(+d.dataset.detail);
+  if (del) {
+    document.getElementById('confirm-text').textContent = `确定要删除核查记录 #${del.dataset.del} 吗？删除后不可恢复。`;
+    document.getElementById('confirm-mask').classList.add('show');
+  }
+});
+document.getElementById('recent-tbody').addEventListener('click', e => {
+  const d = e.target.closest('[data-detail]');
+  if (d) openDrawer(+d.dataset.detail);
+});
+function openDrawer(id) {
+  const r = RECORDS.find(x => x.id === id) || RECORDS[0];
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="report-head" style="margin-bottom:14px">
+      <span class="conclusion-pill ${r.type}"><span class="badge-dot"></span>${r.conclusion}</span>
+    </div>
+    <div class="kv"><span class="k">记录 ID</span><span class="v">#${r.id}</span></div>
+    <div class="kv"><span class="k">核查时间</span><span class="v">${r.time}</span></div>
+    <div class="kv"><span class="k">判定方式</span><span class="v">${r.llm ? '模型判定' : '降级判定（搜索+规则）'}</span></div>
+    <div class="report-block" style="margin-top:16px">
+      <h3>📌 原文</h3><p>${r.text}</p>
+    </div>
+    <div class="report-block">
+      <h3>📌 摘要</h3>
+      <p>系统将原文拆解为 ${r.claims} 条断言并逐条检索证据，共获取 ${r.sources} 条来源，综合判定为"${r.conclusion}"。</p>
+    </div>
+    <div class="report-block">
+      <h3>🧩 断言与证据</h3>
+      <div class="claims-list">
+        <div class="claim-item">
+          <div class="claim-text"><span class="num">断言 1</span><span>${r.text.slice(0, 40)}</span></div>
+          <ul class="claim-sources"><li><span class="src-title">示例来源标题</span><span class="src-domain">people.com.cn</span></li></ul>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('detail-drawer').classList.add('show');
+}
+document.getElementById('drawer-close').addEventListener('click', () => document.getElementById('detail-drawer').classList.remove('show'));
+document.getElementById('confirm-cancel').addEventListener('click', () => document.getElementById('confirm-mask').classList.remove('show'));
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  document.getElementById('confirm-mask').classList.remove('show');
+  toast('已删除该记录（原型演示）');
+});
+
+/* ================= 证据源 ================= */
+document.getElementById('s-keyword').addEventListener('input', e => renderSources(e.target.value.trim()));
+document.getElementById('sources-tbody').addEventListener('click', e => {
+  const sw = e.target.closest('[data-sw]'), ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del-src]');
+  if (sw) { toast(sw.checked ? '已启用该证据源' : '已停用该证据源'); }
+  if (ed) openSourceModal(+ed.dataset.edit);
+  if (del) toast('已删除该证据源（原型演示）');
+});
+function openSourceModal(i) {
+  document.getElementById('source-modal-title').textContent = i === null ? '新增证据源' : '编辑证据源';
+  const s = i === null ? { domain: '', category: '官方媒体', level: 3, on: true, note: '' } : SOURCES[i];
+  document.getElementById('sm-domain').value = s.domain;
+  document.getElementById('sm-category').value = s.category;
+  document.querySelector(`input[name="lv"][value="${s.level}"]`).checked = true;
+  document.querySelector(`input[name="st"][value="${s.on ? 1 : 0}"]`).checked = true;
+  document.getElementById('sm-note').value = s.note;
+  document.getElementById('source-mask').classList.add('show');
+}
+document.getElementById('btn-add-source').addEventListener('click', () => openSourceModal(null));
+document.getElementById('source-cancel').addEventListener('click', () => document.getElementById('source-mask').classList.remove('show'));
+document.getElementById('source-save').addEventListener('click', () => {
+  document.getElementById('source-mask').classList.remove('show');
+  toast('✅ 证据源已保存（原型演示）');
+});
+
+/* ================= 配置 ================= */
+document.getElementById('btn-eye').addEventListener('click', () => {
+  const k = document.getElementById('cfg-key');
+  k.type = k.type === 'password' ? 'text' : 'password';
+});
+document.getElementById('btn-ping').addEventListener('click', () => toast('✅ 健康检查通过：status=ok，used_llm=true'));
+document.getElementById('btn-save-config').addEventListener('click', () => toast('✅ 配置已保存（原型演示）'));
+
+/* ================= 启动 ================= */
+renderRecords(); renderSources();
+applyAuth();
+</script>
+</body>
+</html>

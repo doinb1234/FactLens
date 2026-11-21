@@ -1,0 +1,23 @@
+@startuml
+skinparam dpi 150
+actor 用户 as U
+node "浏览器" as Br {
+  component [Vue 前端页面]
+}
+cloud "Cloudflare Pages" as CF {
+  component [静态站点托管]
+}
+node "PythonAnywhere" as PA {
+  component [WSGI 入口] as W
+  component [FastAPI 应用] as FA
+  database "MySQL 8.0（迭代二）" as DB
+}
+cloud "大模型 API\n（智谱 / DeepSeek 等）" as LLM
+cloud "必应搜索" as Bing
+U --> Br : 输入待核查文本
+Br --> CF : HTTPS 加载页面
+Br --> PA : POST /api/check
+FA --> LLM : OpenAI 兼容 chat/completions
+FA --> Bing : GET 检索结果
+FA --> DB : SQLAlchemy 读写
+@enduml

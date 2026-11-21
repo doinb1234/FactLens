@@ -1,0 +1,113 @@
+@startuml
+skinparam dpi 150
+skinparam classAttributeIconSize 0
+package "表现层（Vue 3）" {
+  class "核查页 CheckPage" as V1
+  class "报告卡片 ReportCard" as V2
+  class "历史记录页 HistoryPage" as V3
+  class "后台管理 AdminApp" as V4
+}
+package "接口层（FastAPI）" {
+  class "CheckRequest" as R1 {
+    + text: str
+  }
+  class "HealthResponse" as R2 {
+    + status: str
+    + used_llm: bool
+    + model: str
+  }
+  class "app.main" as M1 {
+    + check(req: CheckRequest): dict
+    + health(): HealthResponse
+  }
+}
+package "编排层（app.agent）" {
+  class "FactCheckOrchestrator" as O {
+    + check(text: str): dict
+    - _decompose(text): list[str]
+    - _retrieve(claims): list[dict]
+    - _judge(text, evidence): dict
+    - _build_report(): dict
+  }
+  class "ClaimSplitter" as S {
+    + split(text: str): list[str]
+  }
+  class "EvidenceRetriever" as E {
+    + search_assertion(claim: str): dict
+  }
+  abstract class "Judge" as J {
+    + judge(text, evidence): dict
+  }
+  class "ModelJudge" as MJ
+  class "RuleJudge" as RJ
+  class "ReportBuilder" as B {
+    + build(...): dict
+  }
+}
+package "能力层" {
+  class "LLMClient" as L {
+    + available(): bool
+    + chat(messages): str
+    + chat_json(messages): dict
+    + decompose_claims(text): list[str]
+    + judge(text, evidence): dict
+  }
+  class "BingSearch" as G {
+    + search(query, num): list[Source]
+  }
+  class "Source" as So {
+    + title: str
+    + url: str
+    + snippet: str
+    + domain: str
+    + to_dict(): dict
+  }
+  class "Config" as C {
+    + LLM_API_KEY: str
+    + LLM_BASE_URL: str
+    + LLM_MODEL: str
+    + SEARCH_RESULTS_PER_CLAIM: int
+  }
+}
+package "数据层（迭代二）" {
+  class "CheckRecord" as T1 {
+    + id: int
+    + raw_text: str
+    + conclusion: str
+    + checked_at: datetime
+  }
+  class "Claim" as T2 {
+    + id: int
+    + record_id: int
+    + content: str
+  }
+  class "Evidence" as T3 {
+    + id: int
+    + claim_id: int
+    + url: str
+    + domain: str
+  }
+  class "SourceRegistry" as T4 {
+    + domain: str
+    + authority_level: int
+  }
+  class "AdminUser" as T5
+  class "AppConfig" as T6
+}
+O --> S : 1 拆解
+O --> E : 2 检索
+O --> J : 3 判定
+O --> B : 4 报告
+J <|-- MJ
+J <|-- RJ
+MJ --> L : 调用模型
+S --> L : 模型拆解
+S ..> S : 规则降级
+E --> G : 检索
+E --> So : 生成
+RJ --> C : 权威域名表
+T1 "1" o-- "1..3" T2
+T2 "1" o-- "0..*" T3
+T1 "1" o-- "0..*" T3
+B --> T1 : 落库(迭代二)
+@enduml

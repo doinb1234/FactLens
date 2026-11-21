@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactLens 事实透镜 · 信息核查（前台原型）</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<!-- ================= 页头 ================= -->
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="#home">
+      <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="48" y2="48">
+          <stop offset="0" stop-color="#0F766E"/><stop offset="1" stop-color="#14B8A6"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="22" fill="url(#lg)"/>
+        <circle cx="19" cy="19" r="8.5" stroke="#fff" stroke-width="3.4" fill="none"/>
+        <line x1="25.5" y1="25.5" x2="33" y2="33" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>
+        <path d="M15.5 19.5 l2.6 2.6 5-5.6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      FactLens 事实透镜<span class="tag">AI 多领域虚假信息鉴别</span>
+    </a>
+    <nav class="nav">
+      <a href="#home" data-nav="home">开始核查</a>
+      <a href="#history" data-nav="history">历史记录</a>
+      <a href="#about" data-nav="about">关于</a>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+  <!-- ================= 视图 1：核查页 ================= -->
+  <section class="page" id="page-home">
+    <div class="hero">
+      <h1>让真相，<em>清晰一点。</em></h1>
+      <p class="sub">把拿不准的消息交给 FactLens —— 看它如何拆解断言、检索证据、给出可复核的判定。</p>
+    </div>
+
+    <div class="card check-card">
+      <div class="section-title">输入待核查内容</div>
+      <textarea id="input-text" maxlength="2000" placeholder="粘贴一段想核实真假的消息，例如：&#10;“多喝热水能治感冒，感冒吃抗生素好得快。”"></textarea>
+      <div class="check-meta">
+        <div class="examples">
+          <span class="muted">试试示例：</span>
+          <button class="example-chip" data-example="0">地球是太阳系的一颗行星</button>
+          <button class="example-chip" data-example="1">多喝热水能治感冒，感冒吃抗生素好得快</button>
+          <button class="example-chip" data-example="2">手机辐射会导致脑癌，睡觉时手机放床头很危险</button>
+        </div>
+        <span class="char-count" id="char-count">0 / 2000</span>
+      </div>
+      <div style="text-align:right;margin-top:18px">
+        <button class="btn btn-primary" id="btn-check" disabled>🔍 开始核查</button>
+      </div>
+    </div>
+
+    <!-- 核查中：四步流水线 -->
+    <div class="card checking-panel" id="checking-panel" style="display:none">
+      <div class="section-title" style="justify-content:center">FactLens 正在核查…</div>
+      <div class="steps">
+        <div class="step" data-step="0"><div class="dot">1</div><div class="label">拆解断言</div></div>
+        <div class="step" data-step="1"><div class="dot">2</div><div class="label">检索证据</div></div>
+        <div class="step" data-step="2"><div class="dot">3</div><div class="label">综合判定</div></div>
+        <div class="step" data-step="3"><div class="dot">4</div><div class="label">生成报告</div></div>
+      </div>
+      <p class="muted" id="checking-tip">正在把原文拆解成可独立查证的断言…</p>
+    </div>
+
+    <!-- 核查报告 -->
+    <div class="card report-card" id="report-card" style="display:none">
+      <div class="report-head">
+        <span class="conclusion-pill" id="rp-conclusion"></span>
+        <span class="badge" id="rp-llm"></span>
+        <div class="report-meta">
+          <span class="muted" id="rp-time"></span>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>📌 摘要</h3>
+        <p id="rp-summary"></p>
+      </div>
+      <div class="report-block">
+        <h3>🧭 判断理由</h3>
+        <p id="rp-reason"></p>
+      </div>
+
+      <div class="report-block">
+        <h3>⚖️ 证据要点</h3>
+        <div class="evidence-cols">
+          <div class="col col-support"><h4>✅ 支持</h4><ul id="rp-support"></ul></div>
+          <div class="col col-against"><h4>❌ 反驳</h4><ul id="rp-against"></ul></div>
+          <div class="col col-uncertain"><h4>❓ 不确定因素</h4><ul id="rp-uncertain"></ul></div>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>🧩 断言与证据（逐条核对）</h3>
+        <div class="claims-list" id="rp-claims"></div>
+      </div>
+
+      <div class="report-block">
+        <h3>🔗 全部来源（已按 URL 去重）</h3>
+        <ul class="source-all" id="rp-sources"></ul>
+      </div>
+
+      <div class="report-notice" id="rp-notice" style="display:none"></div>
+
+      <div class="report-actions">
+        <button class="btn btn-primary" id="btn-copy">📋 复制报告</button>
+        <button class="btn btn-ghost" id="btn-recheck">↺ 重新核查</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 视图 2：历史记录 ================= -->
+  <section class="page" id="page-history">
+    <div class="hero" style="margin-bottom:22px">
+      <h1 style="font-size:28px">历史记录</h1>
+      <p class="sub">核查记录保存在当前浏览器中（迭代二将迁移至服务端数据库）。</p>
+    </div>
+    <div class="history-toolbar">
+      <input type="text" id="history-search" placeholder="搜索原文关键词…">
+      <button class="btn btn-ghost btn-sm" id="btn-clear-history" style="margin-left:auto">🗑 清空全部</button>
+    </div>
+    <div class="history-list" id="history-list"></div>
+    <div class="card empty-state" id="history-empty">
+      <div class="empty-icon">🗂</div>
+      <p>还没有核查记录，去<a href="#home">开始核查</a>一条消息吧。</p>
+    </div>
+  </section>
+
+  <!-- ================= 视图 3：关于 ================= -->
+  <section class="page" id="page-about">
+    <div class="about-hero">
+      <h1>关于 FactLens</h1>
+      <p class="sub">Fact（事实）+ Lens（透镜）—— 一条说法是真是假，放到透镜下看清它的每一个组成部分。</p>
+    </div>
+    <div class="about-grid">
+      <div class="card about-card">
+        <div class="icon">🧩</div><h3>断言拆解</h3>
+        <p>把一段消息拆成 1~3 条可独立查证的断言，逐条核实，不笼统下结论。</p>
+      </div>
+      <div class="card about-card">
+        <div class="icon">🌐</div><h3>证据检索</h3>
+        <p>为每条断言联网检索证据，保留标题、链接、摘要与域名，来源可追溯。</p>
+      </div>
+      <div class="card about-card">
+        <div class="icon">⚖️</div><h3>四值判定</h3>
+        <p>结论只取四种之一：确认属实 / 确认不实 / 部分属实 / 暂无法核实，绝不编造。</p>
+      </div>
+      <div class="card about-card">
+        <div class="icon">📋</div><h3>透明报告</h3>
+        <p>报告给出摘要、理由、支持与反驳要点、不确定因素，可一键复制分享。</p>
+      </div>
+      <div class="card about-card">
+        <div class="icon">🧾</div><h3>历史记录</h3>
+        <p>刷新后仍能查找、删除记录，或用原文重新核查。</p>
+      </div>
+      <div class="card about-card">
+        <div class="icon">🛡</div><h3>降级可用</h3>
+        <p>模型不可用时自动降级为“搜索 + 规则判定”，服务始终可用、结论趋于保守。</p>
+      </div>
+    </div>
+
+    <div class="card principles">
+      <div class="section-title">核查原则</div>
+      <ul>
+        <li><b>只依据证据：</b>结论只来自检索到的证据与模型分析，无证据不强判。</li>
+        <li><b>证据不足就明说：</b>拿不准时给出“暂无法核实”，并列出不确定因素。</li>
+        <li><b>来源可复核：</b>每条证据都可点击回到原网页，核对上下文与时间。</li>
+        <li><b>区分权威：</b>官方/权威域名在判定中加权，一般网页仅供参考。</li>
+        <li><b>透明告知：</b>报告标注判定方式（模型判定 / 降级判定）与核查时间。</li>
+      </ul>
+    </div>
+
+    <div class="limits">
+      <h3>⚠️ 当前局限（首版如实声明）</h3>
+      <ul>
+        <li>判定基于公开网页检索与模型推理，不能替代权威机构与专业核查；</li>
+        <li>首版只接收文字（≤2000 字），暂不支持图片、视频与文档；</li>
+        <li>未配置模型密钥时结论偏保守，多数标为“暂无法核实”；</li>
+        <li>历史记录暂存于浏览器本地，换设备不可见（迭代二迁移服务端）。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>FactLens 事实透镜 · 广东工业大学计算机学院 软件工程 24 级 56 班团队项目</span>
+    <span>在线预览：factlens-dn7.pages.dev · 本页为<a href="#home">交互原型</a>演示</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 路由 ================= */
+const pages = { home: 'page-home', history: 'page-history', about: 'page-about' };
+function route() {
+  const h = location.hash.replace('#', '').split('?')[0] || 'home';
+  Object.values(pages).forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(pages[h] || pages.home).classList.add('active');
+  document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === h));
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+
+/* ================= 示例核查数据（原型演示用） ================= */
+const DEMO = [
+  {
+    conclusion: '确认属实', conclusion_type: 'true', used_llm: true,
+    summary: '原文只有一项核心断言。多个独立权威来源（百科全书、国家天文台科普平台）一致确认：地球是太阳系八大行星之一，位于距太阳第三近的轨道。未发现与断言相冲突的证据。',
+    reason: '断言唯一且边界清晰，检索到 3 条直接相关的权威来源，表述一致、方向均为支持；权威来源数量 ≥ 2 且无反驳证据，依据判定规则给出"确认属实"。',
+    support: ['维基百科：地球是太阳系中第三近的行星，也是唯一已知存在生命的天体。', '中国国家天文台科普：太阳系八大行星按距日远近依次为水、金、地、火、木、土、天王、海王。', '科普中国：地球围绕太阳公转一周约 365.25 天。'],
+    against: [], uncertainties: ['不同来源对行星分类（八/九大行星）的历史表述存在差异，但不影响本断言。'],
+    claims: [
+      { claim: '地球是太阳系的一颗行星。', sources: [
+        { title: '地球 - 维基百科', url: 'https://zh.wikipedia.org/wiki/地球', snippet: '地球是太阳系中由内及外的第三颗行星，距离太阳约 1.5 亿千米，是已知唯一孕育生命的天体。', domain: 'zh.wikipedia.org' },
+        { title: '太阳系八大行星 - 中国国家天文台', url: 'https://www.nao.cas.cn/', snippet: '太阳系共有八大行星，按与太阳的距离由近及远依次为：水星、金星、地球、火星、木星、土星、天王星、海王星。', domain: 'nao.cas.cn' },
+        { title: '地球 - 科普中国', url: 'https://www.kepuchina.cn/', snippet: '地球绕太阳公转的周期约 365.25 天，自转周期约 23 小时 56 分，拥有一颗天然卫星——月球。', domain: 'kepuchina.cn' }
+      ]}
+    ],
+    sources: []
+  },
+  {
+    conclusion: '部分属实', conclusion_type: 'partial', used_llm: true,
+    summary: '原文包含两项断言："多喝热水能治感冒"与"感冒吃抗生素好得快"。前者有一定合理性（补充水分、缓解不适）但不能"治愈"；后者为常见误区——普通感冒多由病毒引起，抗生素无效。综合判定为部分属实。',
+    reason: '断言 1 检索到支持性科普证据（补水缓解症状），但权威来源均不认为热水能"治愈"感冒；断言 2 检索到多家医疗机构的一致澄清：抗生素只针对细菌感染。两项断言一真一假，整体判为"部分属实"。',
+    support: ['多家健康科普：感冒期间多饮水有助于缓解咽喉不适、稀释痰液。', 'WHO 与疾控科普：普通感冒多为病毒感染，多数可自愈。'],
+    against: ['不存在"热水治愈感冒"的循证依据，热水的作用是缓解症状而非治疗。', '抗生素对病毒性感冒无效，滥用还会增加耐药风险。'],
+    uncertainties: ['"多喝热水"的具体水温、饮用量缺乏统一标准，效果存在个体差异。'],
+    claims: [
+      { claim: '多喝热水能治感冒。', sources: [
+        { title: '感冒了多喝水有用吗 - 丁香医生', url: 'https://dxy.com/', snippet: '感冒时适当多饮水有助于补充体液、缓解咽喉干燥，但没有任何证据表明多喝水能"治愈"感冒，治疗仍需对症与休息。', domain: 'dxy.com' },
+        { title: '普通感冒的防治 - 中国疾控中心', url: 'https://www.chinacdc.cn/', snippet: '普通感冒以对症治疗为主，注意休息、多饮水；多数患者 5~7 天可自愈。', domain: 'chinacdc.cn' }
+      ]},
+      { claim: '感冒吃抗生素好得快。', sources: [
+        { title: '感冒需要用抗生素吗 - 北京市卫健委', url: 'https://wjw.beijing.gov.cn/', snippet: '普通感冒约 90% 由病毒引起，抗生素仅针对细菌感染，对病毒无效；滥用抗生素会导致肠道菌群失调与耐药。', domain: 'wjw.beijing.gov.cn' },
+        { title: '抗菌药合理使用 - 国家卫健委医政医管局', url: 'http://www.nhc.gov.cn/', snippet: '只有在明确细菌感染指征时才应使用抗菌药物，感冒等病毒性疾病不应常规使用。', domain: 'nhc.gov.cn' }
+      ]}
+    ],
+    sources: []
+  },
+  {
+    conclusion: '确认不实', conclusion_type: 'false', used_llm: false,
+    summary: '原文包含两项断言："手机辐射会导致脑癌"与"睡觉时手机放床头很危险"。权威机构（WHO、国际癌症研究机构、中国互联网联合辟谣平台）一致指出：手机射频辐射属非电离辐射，现有研究未证实其致癌；夜间将手机置于床头的主要风险是影响睡眠，而非辐射。综合判定为确认不实。',
+    reason: '检索到 4 条相关权威来源且方向一致：均否定"手机辐射致癌"的说法；无任何权威证据支持原断言。权威来源 ≥ 2 且反驳方向明确，判定为"确认不实"。',
+    support: [],
+    against: ['WHO：目前尚无证据表明使用手机与脑部肿瘤之间存在因果关系。', '中国互联网联合辟谣平台：手机辐射为安全的非电离辐射，"手机辐射致癌"是流传多年的谣言。', '多家三甲医院科普：手机放床头的实际危害是影响睡眠与用眼，而非辐射。'],
+    uncertainties: ['当前判定为降级模式（未配置模型密钥），由规则引擎依据权威来源加权得出，建议配置模型后复核细节。'],
+    claims: [
+      { claim: '手机辐射会导致脑癌。', sources: [
+        { title: '手机辐射与健康 - 世界卫生组织', url: 'https://www.who.int/', snippet: '大量研究至今未证实使用手机会增加脑部肿瘤风险；手机射频场属于非电离辐射，能量不足以破坏 DNA。', domain: 'who.int' },
+        { title: '手机辐射会致癌吗 - 中国互联网联合辟谣平台', url: 'https://www.piyao.org.cn/', snippet: '手机产生的射频辐射属于非电离辐射，国际癌症研究机构将其列为 2B 类（证据有限），与咸菜同级，公众无需恐慌。', domain: 'piyao.org.cn' }
+      ]},
+      { claim: '睡觉时手机放床头很危险。', sources: [
+        { title: '手机放床头辐射大吗 - 北京协和医院科普', url: 'https://www.pumch.cn/', snippet: '手机待机状态辐射极低，远低于国家标准限值；真正的风险是睡前刷手机影响褪黑素分泌与睡眠质量。', domain: 'pumch.cn' },
+        { title: '电离辐射与非电离辐射 - 生态环境部', url: 'https://www.mee.gov.cn/', snippet: '日常生活中的手机、家电产生的是非电离辐射，其能量远低于电离辐射，正常使用不会对人体造成伤害。', domain: 'mee.gov.cn' }
+      ]}
+    ],
+    sources: []
+  }
+];
+// 汇总全部来源（演示数据里为各断言来源去重合并）
+DEMO.forEach(d => {
+  const seen = new Set();
+  d.sources = [];
+  d.claims.forEach(c => c.sources.forEach(s => {
+    if (!seen.has(s.url)) { seen.add(s.url); d.sources.push(s); }
+  }));
+});
+
+/* ================= 核查流程（模拟） ================= */
+const inputEl = document.getElementById('input-text');
+const countEl = document.getElementById('char-count');
+const btnCheck = document.getElementById('btn-check');
+const checkingPanel = document.getElementById('checking-panel');
+const reportCard = document.getElementById('report-card');
+const checkingTips = ['正在把原文拆解成可独立查证的断言…', '正在为每条断言检索网页证据…', '正在综合证据给出判定结论…', '正在整理报告与来源清单…'];
+let currentReport = null;
+
+inputEl.addEventListener('input', () => {
+  const n = inputEl.value.length;
+  countEl.textContent = `${n} / 2000`;
+  countEl.classList.toggle('over', n > 1990);
+  btnCheck.disabled = !inputEl.value.trim();
+});
+document.querySelectorAll('.example-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    inputEl.value = chip.textContent;
+    inputEl.dispatchEvent(new Event('input'));
+  });
+});
+
+function renderReport(r) {
+  currentReport = r;
+  const pill = document.getElementById('rp-conclusion');
+  pill.className = 'conclusion-pill ' + r.conclusion_type;
+  pill.innerHTML = `<span class="badge-dot"></span>${r.conclusion}`;
+  document.getElementById('rp-llm').className = 'badge ' + (r.used_llm ? 'badge-llm' : 'badge-rule');
+  document.getElementById('rp-llm').textContent = r.used_llm ? '🤖 模型判定' : '⚙️ 降级判定（搜索+规则）';
+  document.getElementById('rp-time').textContent = '核查时间：' + r.checked_at;
+  document.getElementById('rp-summary').textContent = r.summary;
+  document.getElementById('rp-reason').textContent = r.reason;
+  const fill = (id, arr) => {
+    const ul = document.getElementById(id);
+    ul.innerHTML = (arr && arr.length) ? arr.map(x => `<li>${x}</li>`).join('') : '<li class="muted">暂无。</li>';
+  };
+  fill('rp-support', r.support); fill('rp-against', r.against); fill('rp-uncertain', r.uncertainties);
+  document.getElementById('rp-claims').innerHTML = r.claims.map((c, i) => `
+    <div class="claim-item">
+      <div class="claim-text"><span class="num">断言 ${i + 1}</span><span>${c.claim}</span></div>
+      <ul class="claim-sources">
+        ${c.sources.map(s => `<li>
+          <div><a class="src-title" href="${s.url}" target="_blank" rel="noopener">${s.title}</a><span class="src-domain">${s.domain}</span></div>
+          <div class="src-snippet">${s.snippet}</div>
+        </li>`).join('')}
+      </ul>
+    </div>`).join('');
+  document.getElementById('rp-sources').innerHTML = r.sources.map(s => `
+    <li><a class="src-title" href="${s.url}" target="_blank" rel="noopener">${s.title}</a><span class="src-domain">${s.domain}</span></li>`).join('');
+  const notice = document.getElementById('rp-notice');
+  notice.style.display = 'block';
+  if (r.used_llm) {
+    notice.className = 'report-notice ok';
+    notice.textContent = 'ℹ️ 本次核查由大模型完成拆解与判定，结论仅基于检索到的公开证据，请结合来源自行复核。';
+  } else {
+    notice.className = 'report-notice';
+    notice.textContent = '⚠️ 当前服务未配置大模型密钥，本次为降级判定（搜索 + 启发式规则），结论偏保守，建议配置模型后复核。';
+  }
+  reportCard.style.display = 'block';
+  reportCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function runCheck() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+  reportCard.style.display = 'none';
+  checkingPanel.style.display = 'block';
+  checkingPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const steps = document.querySelectorAll('.step');
+  steps.forEach(s => s.classList.remove('done', 'current'));
+  const tip = document.getElementById('checking-tip');
+  let i = 0;
+  steps[0].classList.add('current'); tip.textContent = checkingTips[0];
+  const timer = setInterval(() => {
+    steps[i].classList.remove('current'); steps[i].classList.add('done');
+    i++;
+    if (i < 4) { steps[i].classList.add('current'); tip.textContent = checkingTips[i]; }
+    else {
+      clearInterval(timer);
+      const idx = DEMO.findIndex(d => d.claims[0] && text.includes(d.claims[0].claim.slice(0, 8)));
+      let r;
+      if (idx >= 0) {
+        r = JSON.parse(JSON.stringify(DEMO[idx]));
+      } else {
+        r = {
+          conclusion: '暂无法核实', conclusion_type: 'unknown', used_llm: false,
+          summary: `系统将内容拆解为 1 条断言并检索网页证据，未找到与断言直接相关的权威来源，依据"证据不足不强判"原则给出"暂无法核实"。`,
+          reason: '证据不足或方向不明确时，不做"确属真/假"的强判定，建议补充权威信源逐条核实。',
+          support: [], against: [],
+          uncertainties: ['当前为降级判定模式，准确性有限。', '建议补充权威信源逐条核实。'],
+          claims: [{ claim: text.length > 60 ? text.slice(0, 60) + '…' : text, sources: [] }],
+          sources: []
+        };
+      }
+      r.checked_at = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
+      renderReport(r);
+      checkingPanel.style.display = 'none';
+      saveHistory(text, r);
+    }
+  }, 650);
+}
+btnCheck.addEventListener('click', runCheck);
+document.getElementById('btn-recheck').addEventListener('click', () => { inputEl.value = ''; inputEl.dispatchEvent(new Event('input')); location.hash = '#home'; });
+document.getElementById('btn-copy').addEventListener('click', () => {
+  if (!currentReport) return;
+  const lines = [
+    '【FactLens 核查报告】',
+    '结论：' + currentReport.conclusion,
+    '摘要：' + currentReport.summary,
+    '理由：' + currentReport.reason,
+    '支持：' + (currentReport.support.join('；') || '无'),
+    '反驳：' + (currentReport.against.join('；') || '无'),
+    '不确定：' + (currentReport.uncertainties.join('；') || '无'),
+    '来源：' + currentReport.sources.map(s => `${s.title}（${s.domain}）`).join('；'),
+    '核查时间：' + currentReport.checked_at + ' · 由 FactLens 事实透镜生成'
+  ];
+  const text = lines.join('\n');
+  const done = () => showToast('✅ 报告已复制到剪贴板');
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+  else fallbackCopy(text, done);
+});
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) { showToast('复制失败，请手动选择复制'); }
+  ta.remove();
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ================= 历史记录 ================= */
+const HIST_KEY = 'factlens_history_v1';
+const loadHistory = () => JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
+function saveHistory(text, r) {
+  const list = loadHistory();
+  list.unshift({ text, conclusion: r.conclusion, conclusion_type: r.conclusion_type, checked_at: r.checked_at });
+  localStorage.setItem(HIST_KEY, JSON.stringify(list.slice(0, 50)));
+}
+function renderHistory(keyword = '') {
+  const list = loadHistory().filter(h => !keyword || h.text.includes(keyword));
+  const wrap = document.getElementById('history-list');
+  const empty = document.getElementById('history-empty');
+  document.getElementById('btn-clear-history').style.display = loadHistory().length ? '' : 'none';
+  empty.style.display = list.length ? 'none' : '';
+  wrap.innerHTML = list.map((h, i) => `
+    <div class="card history-item">
+      <div class="h-text">
+        <div class="t">${h.text}</div>
+        <div class="time">${h.checked_at}</div>
+      </div>
+      <span class="badge badge-${h.conclusion_type}"><span class="badge-dot"></span>${h.conclusion}</span>
+      <div class="h-actions">
+        <button class="btn btn-ghost btn-sm" data-recheck="${i}">重新核查</button>
+        <button class="btn btn-danger btn-sm" data-del="${i}">删除</button>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('history-search').addEventListener('input', e => renderHistory(e.target.value));
+document.getElementById('history-list').addEventListener('click', e => {
+  const re = e.target.closest('[data-recheck]'), del = e.target.closest('[data-del]');
+  if (re) {
+    const h = loadHistory()[+re.dataset.recheck];
+    inputEl.value = h.text; inputEl.dispatchEvent(new Event('input'));
+    location.hash = '#home'; setTimeout(runCheck, 350);
+  }
+  if (del) {
+    const list = loadHistory(); list.splice(+del.dataset.del, 1);
+    localStorage.setItem(HIST_KEY, JSON.stringify(list));
+    renderHistory(document.getElementById('history-search').value);
+    showToast('已删除该记录');
+  }
+});
+document.getElementById('btn-clear-history').addEventListener('click', () => {
+  localStorage.removeItem(HIST_KEY); renderHistory(); showToast('已清空历史记录');
+});
+
+/* ================= 启动 ================= */
+route();
+renderHistory();
+const qs = location.hash.split('?')[1] || '';
+if (qs.includes('seed=1') && loadHistory().length === 0) {
+  localStorage.setItem(HIST_KEY, JSON.stringify([
+    { text: '手机辐射会导致脑癌，睡觉时手机放床头很危险。', conclusion: '确认不实', conclusion_type: 'false', checked_at: '2026-11-21 19:47' },
+    { text: '多喝热水能治感冒，感冒吃抗生素好得快。', conclusion: '部分属实', conclusion_type: 'partial', checked_at: '2026-11-21 18:02' },
+    { text: '地球是太阳系的一颗行星。', conclusion: '确认属实', conclusion_type: 'true', checked_at: '2026-11-21 16:28' }
+  ]));
+  renderHistory();
+}
+if (qs.includes('demo=')) {
+  const idx = parseInt(qs.split('demo=')[1]) || 0;
+  const chip = document.querySelector(`.example-chip[data-example="${Math.min(idx, 2)}"]`);
+  if (chip) { chip.click(); setTimeout(runCheck, 400); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+@startuml
+left to right direction
+skinparam dpi 150
+skinparam actorStyle awesome
+actor "核查用户（访客）" as U
+actor "管理员" as Admin
+rectangle "FactLens 事实透镜" {
+  usecase "提交文本核查" as UC1
+  usecase "断言拆解" as UC2
+  usecase "证据检索" as UC3
+  usecase "综合判定" as UC4
+  usecase "查看核查报告" as UC5
+  usecase "复制报告" as UC6
+  usecase "复核证据来源" as UC7
+  usecase "管理历史记录" as UC8
+  usecase "登录管理后台" as UC9
+  usecase "查看数据概览" as UC10
+  usecase "管理核查记录" as UC11
+  usecase "管理证据源注册表" as UC12
+  usecase "配置系统参数" as UC13
+}
+U --> UC1
+U --> UC5
+U --> UC8
+U --> UC7
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC3 : <<include>>
+UC1 ..> UC4 : <<include>>
+UC5 ..> UC6 : <<extend>>
+Admin --> UC9
+Admin --> UC10
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+@enduml

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactLens 事实透镜 · 第二次团队作业交付页</title>
+<style>
+:root { --primary:#0d9488; --primary-dark:#0f766e; --bg:#f6f9f8; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+.wrap { max-width:880px; margin:0 auto; padding:56px 24px 80px; }
+.hero { text-align:center; margin-bottom:40px; }
+.hero h1 { font-size:30px; color:#0f3d38; }
+.hero h1 em { font-style:normal; background:linear-gradient(135deg,#0f766e,#14b8a6); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero p { color:var(--muted); margin-top:10px; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.card { background:#fff; border:1px solid var(--border); border-radius:14px; padding:22px 24px; text-decoration:none; color:var(--text); box-shadow:0 1px 3px rgba(15,23,42,.06); transition:all .15s; display:block; }
+.card:hover { border-color:var(--primary); box-shadow:0 10px 28px -14px rgba(13,148,136,.4); text-decoration:none; }
+.card .t { font-weight:800; font-size:16px; color:var(--primary-dark); margin-bottom:6px; }
+.card .d { font-size:13.5px; color:var(--muted); }
+.card .tag { display:inline-block; font-size:11px; font-weight:700; color:var(--primary-dark); background:#ccfbf1; border-radius:6px; padding:1px 8px; margin-bottom:8px; }
+.foot { margin-top:40px; text-align:center; font-size:13px; color:var(--muted); }
+@media (max-width:640px){ .grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>FactLens 事实透镜 · <em>第二次团队作业</em></h1>
+    <p>原型设计 + 概要设计 交付页 · 广东工业大学计算机学院 计科 24 级 56 班</p>
+  </div>
+  <div class="grid">
+    <a class="card" href="prototype/index.html">
+      <span class="tag">原型</span>
+      <div class="t">前台应用原型（HTML 交互版）</div>
+      <div class="d">核查页 / 报告页 / 历史记录 / 关于，含完整交互演示</div>
+    </a>
+    <a class="card" href="prototype/admin.html">
+      <span class="tag">原型</span>
+      <div class="t">后台管理原型（HTML 交互版）</div>
+      <div class="d">登录 / 数据概览 / 核查记录 / 证据源管理 / 系统配置</div>
+    </a>
+    <a class="card" href="design/FactLens_系统设计说明书.pdf">
+      <span class="tag">文档 PDF</span>
+      <div class="t">FactLens_系统设计说明书</div>
+      <div class="d">总体设计 · 接口设计 · 运行设计 · 数据结构 · 出错处理（33 页）</div>
+    </a>
+    <a class="card" href="design/FactLens_数据库设计说明书.pdf">
+      <span class="tag">文档 PDF</span>
+      <div class="t">FactLens_数据库设计说明书</div>
+      <div class="d">ER 图 · 关系模式 · 物理结构 · ORM 映射 · 建表脚本（19 页）</div>
+    </a>
+    <a class="card" href="design/博客随笔-FactLens第二次团队作业.md">
+      <span class="tag">博客草稿</span>
+      <div class="t">第二次团队作业博客随笔</div>
+      <div class="d">博客园发布用 Markdown 源稿（含全部章节与图片引用）</div>
+    </a>
+    <a class="card" href="modao/墨刀复刻指南.md">
+      <span class="tag">指南</span>
+      <div class="t">墨刀复刻指南</div>
+      <div class="d">10 个画板 + 弹层状态，按页复刻原型到墨刀（约 30 分钟）</div>
+    </a>
+  </div>
+  <div class="foot">
+    GitHub 仓库：<a href="https://github.com/yyue62353-lab/FactLens">yyue62353-lab/FactLens</a> ·
+    线上系统：<a href="https://factlens-dn7.pages.dev">factlens-dn7.pages.dev</a> ·
+    团队：FactLens（七人）· 2026-11-22
+  </div>
+</div>
+</body>
+</html>

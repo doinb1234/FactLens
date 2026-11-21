@@ -1,0 +1,76 @@
+@startuml
+skinparam dpi 150
+entity "t_check_record\n核查记录" as R {
+  * id : BIGINT <<PK>>
+  --
+  client_id : CHAR(36)
+  raw_text : TEXT
+  conclusion : VARCHAR(16)
+  conclusion_type : VARCHAR(8)
+  summary : VARCHAR(500)
+  reason : VARCHAR(500)
+  support_json : JSON
+  against_json : JSON
+  uncertainties_json : JSON
+  used_llm : TINYINT
+  llm_model : VARCHAR(64)
+  request_id : VARCHAR(64)
+  checked_at : DATETIME
+  created_at : DATETIME
+}
+entity "t_claim\n断言" as C {
+  * id : BIGINT <<PK>>
+  --
+  * record_id : BIGINT <<FK>>
+  seq_no : TINYINT
+  content : VARCHAR(500)
+}
+entity "t_evidence\n证据来源" as E {
+  * id : BIGINT <<PK>>
+  --
+  * claim_id : BIGINT <<FK>>
+  record_id : BIGINT <<FK>>
+  title : VARCHAR(200)
+  url : VARCHAR(500)
+  url_hash : CHAR(32) <<UK>>
+  snippet : VARCHAR(1000)
+  domain : VARCHAR(128)
+  authority_level : TINYINT
+}
+entity "t_source_registry\n证据源注册表" as SR {
+  * id : BIGINT <<PK>>
+  --
+  domain : VARCHAR(128) <<UK>>
+  category : VARCHAR(32)
+  authority_level : TINYINT
+  status : TINYINT
+  note : VARCHAR(500)
+  updated_by : BIGINT <<FK>>
+  updated_at : DATETIME
+}
+entity "t_admin_user\n管理员" as AU {
+  * id : BIGINT <<PK>>
+  --
+  username : VARCHAR(32) <<UK>>
+  password_hash : VARCHAR(128)
+  role : VARCHAR(16)
+  status : TINYINT
+  last_login_at : DATETIME
+  created_at : DATETIME
+}
+entity "t_app_config\n系统配置" as AC {
+  * id : BIGINT <<PK>>
+  --
+  config_key : VARCHAR(64) <<UK>>
+  config_value : VARCHAR(500)
+  description : VARCHAR(200)
+  updated_by : BIGINT <<FK>>
+  updated_at : DATETIME
+}
+R ||--o{ C : 拆解为
+C ||--o{ E : 检索到
+R ||--o{ E : 汇总
+E }o..|| SR : 域名匹配(非强制)
+AU ||--o{ SR : 维护
+AU ||--o{ AC : 维护
+@enduml

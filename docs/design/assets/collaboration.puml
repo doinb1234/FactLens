@@ -1,0 +1,27 @@
+@startuml
+skinparam dpi 150
+title FactLens 核查流程协作图（消息编号与方向）
+object "用户" as U
+object "Vue 前端\nCheckPage" as F
+object "app.main\n接口层" as M
+object "agent\n编排层" as A
+object "app.llm\n模型调用" as L
+object "app.searcher\n检索层" as S
+object "报告对象\nCheckReport" as R
+object "历史记录\n(浏览器存储)" as H
+U --> F : 1: 输入文本并提交
+F --> M : 2: POST /api/check
+M --> A : 3: check(text)
+A --> L : 4: decompose_claims(text)
+L --> A : 5: 返回断言
+A --> S : 6*[每条断言]: search_assertion(claim)
+S --> A : 7: 返回来源
+A --> L : 8: judge(text, evidence)
+L --> A : 9: 返回判定
+A --> R : 10: build 生成报告
+A --> M : 11: 返回报告 JSON
+M --> F : 12: 200 报告
+F --> R : 13: 渲染报告
+F --> H : 14: 保存历史记录
+R --> U : 15: 展示给用户
+@enduml

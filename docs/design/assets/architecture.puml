@@ -1,0 +1,53 @@
+@startuml
+skinparam dpi 150
+skinparam componentStyle rectangle
+skinparam ArrowColor #64748B
+skinparam component {
+  BackgroundColor #F0FDFA
+  BorderColor #0F766E
+  FontColor #0F172A
+}
+package "表现层 Vue 3 + Vite" {
+  [核查页/报告展示] as F1
+  [历史记录页] as F2
+  [关于页] as F3
+  [后台管理 SPA] as F4
+}
+package "接口层 FastAPI" {
+  [POST /api/check] as A1
+  [GET /api/health] as A2
+  [后台接口 /api/admin/*] as A3
+}
+package "编排层 智能体流水线" {
+  [断言拆解 ClaimSplitter] as B1
+  [证据检索 EvidenceRetriever] as B2
+  [综合判定 Judge] as B3
+  [报告生成 ReportBuilder] as B4
+}
+package "能力层" {
+  [LLM 客户端(OpenAI兼容)] as C1
+  [必应搜索客户端] as C2
+  [规则降级引擎] as C3
+}
+package "数据层（迭代二新增）" {
+  [SQLAlchemy ORM] as D1
+  database "MySQL 8.0 / SQLite" as D2
+}
+F1 --> A1 : HTTPS JSON
+F2 --> A1
+F3 --> A1
+F4 --> A3 : 管理员令牌
+A1 --> B1 : check(text)
+A2 --> C1 : 可用性检查
+B1 --> B2
+B2 --> B3
+B3 --> B4
+B1 --> C1 : 模型拆解
+B1 ..> C3 : 无key降级
+B2 --> C2 : 检索
+B3 --> C1 : 模型判定
+B3 ..> C3 : 无key降级
+B4 --> D1 : 落库
+A3 --> D1
+D1 --> D2
+@enduml

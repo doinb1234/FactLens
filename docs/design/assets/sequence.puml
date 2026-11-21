@@ -1,0 +1,44 @@
+@startuml
+skinparam dpi 150
+autonumber
+actor 用户 as U
+participant "Vue 前端" as F
+participant "FastAPI\napp.main" as M
+participant "编排层\nagent" as A
+participant "LLM 调用层\napp.llm" as L
+participant "检索层\napp.searcher" as S
+database "数据库\n(迭代二)" as DB
+U -> F : 输入待核查文本
+F -> F : 前端校验（空白/2000 字）
+F -> M : POST /api/check {"text": "..."}
+M -> M : 服务端校验
+alt 输入非法
+  M --> F : 400 错误说明
+  F --> U : 展示错误提示
+else 输入合法
+  M -> A : check(text)
+  alt LLM 可用
+    A -> L : decompose_claims(text)
+    L --> A : 1~3 条断言
+  else 无 Key 降级
+    A -> A : 规则分句拆解
+  end
+  loop 每条断言
+    A -> S : search_assertion(claim)
+    S --> A : {query, sources[]}
+  end
+  alt LLM 可用
+    A -> L : judge(text, claims_evidence)
+    L --> A : 判定 JSON（四值结论）
+  else 无 Key 降级
+    A -> A : 启发式规则判定
+  end
+  A -> A : 汇总去重来源、生成报告
+  A -> DB : 保存核查记录（迭代二）
+  A --> M : 报告 JSON
+  M --> F : 200 报告
+  F -> F : 渲染结论/理由/断言/来源
+  F -> DB : 历史记录持久化（迭代二）
+  F --> U : 展示核查报告
+end
+@enduml
