@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>FactLens 事实透镜</title><style>
+@page { size: A4; margin: 22mm 18mm 20mm 18mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "SimSun", "Songti SC", "NSimSun", serif;
+  font-size: 10.5pt; line-height: 1.78; color: #1c1c1c;
+  counter-reset: figcnt tblcnt;
+}
+h1, h2, h3, h4 { font-family: "Microsoft YaHei", "SimHei", sans-serif; color: #0f3d38; }
+h1 {
+  font-size: 16pt; margin: 0 0 14px; padding-bottom: 7px;
+  border-bottom: 2.5px solid #0f766e; page-break-before: always; page-break-after: avoid;
+}
+h1.first { page-break-before: avoid; }
+h2 { font-size: 13.5pt; margin: 18px 0 9px; page-break-after: avoid; }
+h3 { font-size: 12pt; margin: 14px 0 7px; page-break-after: avoid; }
+h4 { font-size: 11pt; margin: 11px 0 6px; page-break-after: avoid; }
+p { margin: 6px 0; text-align: justify; }
+ul, ol { margin: 6px 0 6px 1.6em; padding: 0; }
+li { margin: 3px 0; }
+table {
+  width: 100%; border-collapse: collapse; margin: 10px 0;
+  font-size: 9pt; page-break-inside: avoid;
+}
+th { background: #e8f5f3; font-family: "Microsoft YaHei"; font-weight: 700; }
+th, td { border: 1px solid #a8bcb9; padding: 4.5px 7px; text-align: left; vertical-align: top; }
+tr { page-break-inside: avoid; }
+td.center, th.center { text-align: center; }
+code {
+  font-family: Consolas, "Courier New", monospace; font-size: 8.8pt;
+  background: #f3f6f6; padding: 1px 4px; border-radius: 3px; color: #0f766e;
+}
+pre {
+  background: #f6f8f8; border: 1px solid #dbe5e3; border-radius: 6px;
+  padding: 10px 12px; font-size: 8.8pt; line-height: 1.5; overflow-x: hidden;
+  page-break-inside: avoid;
+}
+pre code { background: none; padding: 0; color: #234; }
+figure { margin: 12px 0; text-align: center; page-break-inside: avoid; }
+figure img { max-width: 100%; }
+figcaption {
+  font-family: "Microsoft YaHei"; font-size: 9pt; color: #4a5a58; margin-top: 5px;
+}
+figcaption::before { counter-increment: figcnt; content: "图 " counter(figcnt) "  "; font-weight: 700; }
+strong { color: #0f3d38; }
+a { color: #0f766e; text-decoration: none; }
+blockquote { margin: 8px 0; padding: 6px 14px; background: #f0f7f6; border-left: 4px solid #0f766e; color: #345; }
+hr { border: none; border-top: 1px dashed #b9c8c5; margin: 16px 0; }
+
+/* ---------- 封面 ---------- */
+.cover { text-align: center; page-break-after: always; padding-top: 130px; }
+.cover .logo-title { font-family: "Microsoft YaHei"; font-size: 26pt; font-weight: 800; color: #0f3d38; margin-bottom: 6px; }
+.cover .logo-sub { font-size: 12pt; color: #56706c; margin-bottom: 90px; }
+.cover .doc-type {
+  font-family: "Microsoft YaHei"; font-size: 30pt; font-weight: 800; letter-spacing: 6px;
+  color: #0f766e; margin-bottom: 8px;
+}
+.cover .doc-en { font-size: 10.5pt; color: #89a09c; margin-bottom: 110px; }
+.cover table { width: 62%; margin: 0 auto; border: none; font-size: 10.5pt; }
+.cover table td { border: none; padding: 7px 10px; text-align: left; }
+.cover table td.k { text-align: right; color: #56706c; width: 34%; font-family: "Microsoft YaHei"; }
+.cover table td.v { font-family: "Microsoft YaHei"; font-weight: 700; }
+
+/* ---------- 目录 ---------- */
+.toc { page-break-after: always; }
+.toc h1 { border: none; }
+.toc ul { list-style: none; margin-left: 0; }
+.toc ul ul { margin-left: 1.4em; }
+.toc li { margin: 5px 0; }
+.toc .lvl1 { font-family: "Microsoft YaHei"; font-weight: 700; }
+.toc .lvl2 { color: #456; font-size: 10pt; }
+</style></head>
+<body>
+
+<div class="cover">
+  <div class="logo-title">FactLens 事实透镜</div>
+  <div class="logo-sub">AI 多领域虚假信息鉴别智能体</div>
+  <div class="doc-type">数据库设计说明书</div>
+  <div class="doc-en">Database Design Specification</div>
+  <table>
+    <tr><td class="k">项目名称</td><td class="v"></td></tr>
+    <tr><td class="k">文档版本</td><td class="v">V1.0</td></tr>
+    <tr><td class="k">编制日期</td><td class="v">2026-11-22</td></tr>
+    <tr><td class="k">团队名称</td><td class="v">FactLens</td></tr>
+    <tr><td class="k">所属课程</td><td class="v">广东工业大学计算机学院 · 计科 24 级 56 班 · 软件工程</td></tr>
+    <tr><td class="k">指导教师</td><td class="v">flowet</td></tr>
+    <tr><td class='k'>团队成员</td><td class='v'>3224004156－刘心怡</td></tr><tr><td class='k'>团队成员</td><td class='v'>3224004158－杨添媛</td></tr><tr><td class='k'>团队成员</td><td class='v'>3224004157－吴纯瑶</td></tr><tr><td class='k'>团队成员</td><td class='v'>3224004155－李晨昀</td></tr><tr><td class='k'>团队成员</td><td class='v'>3124004111－依木拉木·阿不都苏力</td></tr><tr><td class='k'>团队成员</td><td class='v'>3124004121－艾力夏提·艾海买提</td></tr><tr><td class='k'>团队成员</td><td class='v'>3124004146－杨宗林</td></tr>
+  </table>
+</div>
+
+<div class="toc"><h1>目 录</h1><ul><li class="lvl1">1 引言</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1 编写目的</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2 背景</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3 定义</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.4 参考资料</li><li class="lvl1">2 外部设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1 标识符和状态</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.2 使用它的程序</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3 约定</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4 专门指导</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5 支持软件</li><li class="lvl1">3 结构设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1 概念结构设计（ER 图）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2 逻辑结构设计（关系模式）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 tcheckrecord 核查记录表</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.2 tclaim 断言表</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3 tevidence 证据来源表</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.4 tsourceregistry 证据源注册表</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.5 tadminuser 管理员表</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.6 tappconfig 系统配置表</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3 物理结构设计</li><li class="lvl1">4 运用设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1 数据字典设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2 安全保密设计</li><li class="lvl1">附录 A 对象关系映射（ORM）</li><li class="lvl1">附录 B 建表脚本（MySQL 8.0，节选）</li></ul></div>
+<!-- title: FactLens 事实透镜 -->
+<!-- subtitle: AI 多领域虚假信息鉴别智能体 -->
+<!-- doctype: 数据库设计说明书 -->
+<!-- doctype_en: Database Design Specification -->
+<!-- version: V1.0 -->
+<!-- date: 2026-11-22 -->
+<!-- team: FactLens -->
+<!-- course: 广东工业大学计算机学院 · 计科 24 级 56 班 · 软件工程 -->
+<!-- teacher: flowet -->
+<!-- members: 3224004156－刘心怡 | 3224004158－杨添媛 | 3224004157－吴纯瑶 | 3224004155－李晨昀 | 3124004111－依木拉木·阿不都苏力 | 3124004121－艾力夏提·艾海买提 | 3124004146－杨宗林 -->
+
+<h1 class="first">1 引言</h1>
+<h2>1.1 编写目的</h2>
+<p>本文档是 FactLens 事实透镜的数据库设计说明书，依据 GB/T 8567—2006《计算机软件文档编制规范》中数据库设计说明书的编制要求编写，对应第二次团队作业（原型设计 + 概要设计）的数据库设计部分。</p>
+<p>首版系统将历史记录保存在浏览器本地，尚无服务端数据库。迭代二引入服务端数据库，实现核查记录持久化（需求 R01）、管理后台（R02）与证据源注册表（R03）。本文档给出该数据库的概念结构（ER 图）、逻辑结构（关系模式）、物理结构与对象关系映射，作为迭代二建库与编码的依据。</p>
+<h2>1.2 背景</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据库名称</td>
+<td>factlens</td>
+</tr>
+<tr>
+<td>数据库系统</td>
+<td>线上 MySQL 8.0（PythonAnywhere 托管提供）；本地开发 SQLite 3</td>
+</tr>
+<tr>
+<td>访问方式</td>
+<td>Python 后端经 SQLAlchemy ORM 访问；管理后台经 /api/admin/* 接口间接访问</td>
+</tr>
+<tr>
+<td>使用它的程序</td>
+<td>FactLens 后端核查服务（落库核查记录）、管理后台（运维与配置）</td>
+</tr>
+<tr>
+<td>首次建库时间</td>
+<td>迭代二（计划 2026 年 11 月下旬）</td>
+</tr>
+</tbody>
+</table>
+<h2>1.3 定义</h2>
+<p>本文档使用的缩写与术语与《FactLens 系统设计说明书》1.3 节一致，此处补充数据库专用术语：</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ER 模型</td>
+<td>Entity-Relationship 实体联系模型，用实体、属性、联系描述概念结构</td>
+</tr>
+<tr>
+<td>关系模式</td>
+<td>用二维表描述的数据库逻辑结构，本文档以 t_ 前缀命名六张表</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>对象关系映射，实体类与库表之间的映射关系，见附录 A</td>
+</tr>
+<tr>
+<td>权威等级</td>
+<td>证据源可信度分档：3=高、2=中、1=低、0=黑名单</td>
+</tr>
+<tr>
+<td>软删除</td>
+<td>通过 status 字段标记停用而非物理删除，保证历史数据可追溯</td>
+</tr>
+</tbody>
+</table>
+<h2>1.4 参考资料</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>资料</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[1]</td>
+<td>《FactLens 系统设计说明书》（本文档姊妹篇，第 5 章系统数据结构设计）</td>
+</tr>
+<tr>
+<td>[2]</td>
+<td>团队仓库需求说明 docs/requirements.md（F01～F08）</td>
+</tr>
+<tr>
+<td>[3]</td>
+<td>GB/T 8567—2006 计算机软件文档编制规范</td>
+</tr>
+<tr>
+<td>[4]</td>
+<td>课程作业要求（第二次团队作业）</td>
+</tr>
+<tr>
+<td>[5]</td>
+<td>SQLAlchemy 2.0 文档、MySQL 8.0 参考手册</td>
+</tr>
+</tbody>
+</table>
+<h1>2 外部设计</h1>
+<h2>2.1 标识符和状态</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>约定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据库名</td>
+<td>factlens</td>
+</tr>
+<tr>
+<td>表名</td>
+<td>t_ 前缀 + 小写下划线（如 t_check_record），共 6 张</td>
+</tr>
+<tr>
+<td>字段名</td>
+<td>小写下划线（如 conclusion_type）</td>
+</tr>
+<tr>
+<td>主键</td>
+<td>每表 BIGINT 自增 id（t_evidence 附加 url_hash 唯一键）</td>
+</tr>
+<tr>
+<td>外键</td>
+<td>以 _id 结尾，指向主表主键</td>
+</tr>
+<tr>
+<td>状态字段</td>
+<td>status / 软删除标记，1=正常启用，0=停用</td>
+</tr>
+</tbody>
+</table>
+<h2>2.2 使用它的程序</h2>
+<table>
+<thead>
+<tr>
+<th>程序</th>
+<th>访问表</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>后端核查服务（编排层/报告生成）</td>
+<td>t_check_record、t_claim、t_evidence</td>
+<td>INSERT（核查落库）</td>
+</tr>
+<tr>
+<td>降级判定引擎（RuleJudge）</td>
+<td>t_source_registry</td>
+<td>SELECT（权威域名加权）</td>
+</tr>
+<tr>
+<td>管理后台-概览</td>
+<td>t_check_record</td>
+<td>SELECT（统计聚合）</td>
+</tr>
+<tr>
+<td>管理后台-记录管理</td>
+<td>t_check_record</td>
+<td>SELECT / DELETE</td>
+</tr>
+<tr>
+<td>管理后台-证据源管理</td>
+<td>t_source_registry</td>
+<td>CRUD</td>
+</tr>
+<tr>
+<td>管理后台-系统配置</td>
+<td>t_app_config</td>
+<td>SELECT / UPDATE</td>
+</tr>
+<tr>
+<td>管理后台-登录</td>
+<td>t_admin_user</td>
+<td>SELECT（口令校验）、UPDATE（登录时间）</td>
+</tr>
+</tbody>
+</table>
+<h2>2.3 约定</h2>
+<ol>
+<li><strong>命名约定</strong>：表/字段一律小写下划线；布尔字段以 tinyint(1) 表达；时间字段为 datetime 类型，存北京时间字符串（UTC+8），与首版 checked_at 格式一致；</li>
+<li><strong>主外键约定</strong>：主键 BIGINT 自增；外键同类型并建普通索引；外键关联仅作逻辑约束（应用层校验），不启用级联物理删除，删除记录采用应用层先删子表再删主表的事务顺序；</li>
+<li><strong>JSON 字段约定</strong>：support_json、against_json、uncertainties_json 存字符串数组的 JSON 文本，避免三张明细表；</li>
+<li><strong>去重约定</strong>：证据以 url_hash（URL 规范化后 MD5）唯一索引去重，与首版"按 URL 去重"行为一致；</li>
+<li><strong>字符集约定</strong>：utf8mb4 / utf8mb4_unicode_ci。</li>
+</ol>
+<h2>2.4 专门指导</h2>
+<ul>
+<li>建库脚本、表结构变更脚本随仓库版本管理（tools/schema 或 migrations 目录）；</li>
+<li>迭代二上线前用真实核查流量做一次迁移演练：将 localStorage 历史导出为 JSON，批量写入 t_check_record；</li>
+<li>敏感字段（管理员口令哈希、API 密钥）不得出现在日志、备份导出物与仓库中。</li>
+</ul>
+<h2>2.5 支持软件</h2>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MySQL 8.0（线上）/ SQLite 3（本地）</td>
+<td>数据库系统</td>
+</tr>
+<tr>
+<td>SQLAlchemy 2.0（Python）</td>
+<td>ORM 与连接管理</td>
+</tr>
+<tr>
+<td>pymysql（线上）/ 内置 sqlite3（本地）</td>
+<td>数据库驱动</td>
+</tr>
+<tr>
+<td>MySQL Workbench / DBeaver</td>
+<td>设计与管理工具</td>
+</tr>
+</tbody>
+</table>
+<h1>3 结构设计</h1>
+<h2>3.1 概念结构设计（ER 图）</h2>
+<figure><img src="assets/er.png" alt="FactLens 数据库 ER 图"><figcaption>FactLens 数据库 ER 图</figcaption></figure>
+<p>实体与联系说明：</p>
+<table>
+<thead>
+<tr>
+<th>实体</th>
+<th>含义</th>
+<th>主要联系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>t_check_record 核查记录</td>
+<td>一次核查的完整存档</td>
+<td>拆解为 1～3 条断言；汇总多条证据</td>
+</tr>
+<tr>
+<td>t_claim 断言</td>
+<td>从原文拆出的可独立查证陈述</td>
+<td>属于 1 条记录；检索到 0～n 条证据</td>
+</tr>
+<tr>
+<td>t_evidence 证据来源</td>
+<td>断言的一条检索来源</td>
+<td>属于 1 条断言并冗余关联记录；与注册表按域名匹配（非强制）</td>
+</tr>
+<tr>
+<td>t_source_registry 证据源注册表</td>
+<td>域名可信度档案</td>
+<td>由管理员维护；参与判定加权</td>
+</tr>
+<tr>
+<td>t_admin_user 管理员</td>
+<td>后台账号</td>
+<td>维护注册表与系统配置</td>
+</tr>
+<tr>
+<td>t_app_config 系统配置</td>
+<td>键值配置</td>
+<td>由管理员维护</td>
+</tr>
+</tbody>
+</table>
+<p>设计要点：证据同时挂靠断言（claim_id）与记录（record_id），既支持"断言级证据展示"（R04），也便于按记录统计来源数；注册表与证据之间是<strong>按域名的非强制匹配</strong>——证据落库时记录当时的权威等级快照，注册表后续调整不影响历史报告。</p>
+<h2>3.2 逻辑结构设计（关系模式）</h2>
+<h3>3.2.1 t_check_record 核查记录表</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>空</th>
+<th>默认</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td>自增</td>
+<td>主键 PK</td>
+</tr>
+<tr>
+<td>client_id</td>
+<td>CHAR(36)</td>
+<td>是</td>
+<td>NULL</td>
+<td>匿名客户端标识（浏览器生成 UUID，迭代二用于跨设备同步）</td>
+</tr>
+<tr>
+<td>raw_text</td>
+<td>TEXT</td>
+<td>否</td>
+<td></td>
+<td>待核查原文（≤2000 字）</td>
+</tr>
+<tr>
+<td>conclusion</td>
+<td>VARCHAR(16)</td>
+<td>否</td>
+<td></td>
+<td>四值结论中文名</td>
+</tr>
+<tr>
+<td>conclusion_type</td>
+<td>VARCHAR(8)</td>
+<td>否</td>
+<td></td>
+<td>true/false/partial/unknown</td>
+</tr>
+<tr>
+<td>summary</td>
+<td>VARCHAR(500)</td>
+<td>否</td>
+<td></td>
+<td>整体分析摘要</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>VARCHAR(500)</td>
+<td>否</td>
+<td></td>
+<td>判定理由</td>
+</tr>
+<tr>
+<td>support_json</td>
+<td>JSON</td>
+<td>是</td>
+<td>NULL</td>
+<td>支持要点数组</td>
+</tr>
+<tr>
+<td>against_json</td>
+<td>JSON</td>
+<td>是</td>
+<td>NULL</td>
+<td>反驳要点数组</td>
+</tr>
+<tr>
+<td>uncertainties_json</td>
+<td>JSON</td>
+<td>是</td>
+<td>NULL</td>
+<td>不确定因素数组</td>
+</tr>
+<tr>
+<td>claim_count</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>断言数（冗余，便于列表展示）</td>
+</tr>
+<tr>
+<td>source_count</td>
+<td>SMALLINT</td>
+<td>否</td>
+<td>0</td>
+<td>来源数（冗余，便于列表展示）</td>
+</tr>
+<tr>
+<td>used_llm</td>
+<td>TINYINT(1)</td>
+<td>否</td>
+<td>0</td>
+<td>是否模型判定</td>
+</tr>
+<tr>
+<td>llm_model</td>
+<td>VARCHAR(64)</td>
+<td>是</td>
+<td>NULL</td>
+<td>本次判定所用模型名</td>
+</tr>
+<tr>
+<td>request_id</td>
+<td>CHAR(32)</td>
+<td>是</td>
+<td>NULL</td>
+<td>请求编号，关联服务端日志（迭代二）</td>
+</tr>
+<tr>
+<td>checked_at</td>
+<td>DATETIME</td>
+<td>否</td>
+<td></td>
+<td>核查时间（北京时间）</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>1=正常，0=已删除（软删除）</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>DATETIME</td>
+<td>否</td>
+<td>当前时间</td>
+<td>落库时间</td>
+</tr>
+</tbody>
+</table>
+<p>索引：PK(id)；IDX(checked_at)；IDX(conclusion_type)；IDX(client_id)。</p>
+<h3>3.2.2 t_claim 断言表</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>空</th>
+<th>默认</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td>自增</td>
+<td>主键 PK</td>
+</tr>
+<tr>
+<td>record_id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td></td>
+<td>外键 FK → t_check_record.id</td>
+</tr>
+<tr>
+<td>seq_no</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>断言序号（1～3）</td>
+</tr>
+<tr>
+<td>content</td>
+<td>VARCHAR(500)</td>
+<td>否</td>
+<td></td>
+<td>断言内容</td>
+</tr>
+</tbody>
+</table>
+<p>索引：PK(id)；IDX(record_id)；UK(record_id, seq_no)。</p>
+<h3>3.2.3 t_evidence 证据来源表</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>空</th>
+<th>默认</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td>自增</td>
+<td>主键 PK</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td></td>
+<td>外键 FK → t_claim.id</td>
+</tr>
+<tr>
+<td>record_id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td></td>
+<td>冗余外键 FK → t_check_record.id</td>
+</tr>
+<tr>
+<td>title</td>
+<td>VARCHAR(200)</td>
+<td>否</td>
+<td></td>
+<td>来源标题</td>
+</tr>
+<tr>
+<td>url</td>
+<td>VARCHAR(500)</td>
+<td>否</td>
+<td></td>
+<td>来源链接</td>
+</tr>
+<tr>
+<td>url_hash</td>
+<td>CHAR(32)</td>
+<td>否</td>
+<td></td>
+<td>URL 规范化后 MD5，唯一键 UK</td>
+</tr>
+<tr>
+<td>snippet</td>
+<td>VARCHAR(1000)</td>
+<td>是</td>
+<td>NULL</td>
+<td>摘要</td>
+</tr>
+<tr>
+<td>domain</td>
+<td>VARCHAR(128)</td>
+<td>否</td>
+<td></td>
+<td>域名（www. 已剥除）</td>
+</tr>
+<tr>
+<td>authority_level</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>落库时权威等级快照（3/2/1/0）</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>DATETIME</td>
+<td>否</td>
+<td>当前时间</td>
+<td>落库时间</td>
+</tr>
+</tbody>
+</table>
+<p>索引：PK(id)；UK(url_hash)；IDX(claim_id)；IDX(record_id)；IDX(domain)。</p>
+<h3>3.2.4 t_source_registry 证据源注册表</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>空</th>
+<th>默认</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td>自增</td>
+<td>主键 PK</td>
+</tr>
+<tr>
+<td>domain</td>
+<td>VARCHAR(128)</td>
+<td>否</td>
+<td></td>
+<td>域名，唯一键 UK</td>
+</tr>
+<tr>
+<td>category</td>
+<td>VARCHAR(32)</td>
+<td>否</td>
+<td></td>
+<td>类别（官方政府/官方媒体/医疗机构/百科/专业媒体/社区/谣言站点等）</td>
+</tr>
+<tr>
+<td>authority_level</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>权威等级：3=高、2=中、1=低、0=黑名单</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>1=启用，0=停用</td>
+</tr>
+<tr>
+<td>note</td>
+<td>VARCHAR(500)</td>
+<td>是</td>
+<td>NULL</td>
+<td>备注（登记理由等）</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>BIGINT</td>
+<td>是</td>
+<td>NULL</td>
+<td>外键 FK → t_admin_user.id，最后维护人</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>DATETIME</td>
+<td>否</td>
+<td>当前时间</td>
+<td>更新时间</td>
+</tr>
+</tbody>
+</table>
+<p>索引：PK(id)；UK(domain)；IDX(authority_level, status)。</p>
+<h3>3.2.5 t_admin_user 管理员表</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>空</th>
+<th>默认</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td>自增</td>
+<td>主键 PK</td>
+</tr>
+<tr>
+<td>username</td>
+<td>VARCHAR(32)</td>
+<td>否</td>
+<td></td>
+<td>登录名，唯一键 UK</td>
+</tr>
+<tr>
+<td>password_hash</td>
+<td>VARCHAR(128)</td>
+<td>否</td>
+<td></td>
+<td>口令哈希（bcrypt），不存明文</td>
+</tr>
+<tr>
+<td>role</td>
+<td>VARCHAR(16)</td>
+<td>否</td>
+<td>admin</td>
+<td>角色：admin=超级管理员，operator=运维员</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TINYINT</td>
+<td>否</td>
+<td>1</td>
+<td>1=启用，0=停用</td>
+</tr>
+<tr>
+<td>last_login_at</td>
+<td>DATETIME</td>
+<td>是</td>
+<td>NULL</td>
+<td>最近登录时间</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>DATETIME</td>
+<td>否</td>
+<td>当前时间</td>
+<td>创建时间</td>
+</tr>
+</tbody>
+</table>
+<p>索引：PK(id)；UK(username)。</p>
+<h3>3.2.6 t_app_config 系统配置表</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>空</th>
+<th>默认</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>否</td>
+<td>自增</td>
+<td>主键 PK</td>
+</tr>
+<tr>
+<td>config_key</td>
+<td>VARCHAR(64)</td>
+<td>否</td>
+<td></td>
+<td>配置键，唯一键 UK（如 LLM_MODEL、SEARCH_RESULTS_PER_CLAIM）</td>
+</tr>
+<tr>
+<td>config_value</td>
+<td>VARCHAR(500)</td>
+<td>否</td>
+<td></td>
+<td>配置值</td>
+</tr>
+<tr>
+<td>description</td>
+<td>VARCHAR(200)</td>
+<td>是</td>
+<td>NULL</td>
+<td>用途说明</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>BIGINT</td>
+<td>是</td>
+<td>NULL</td>
+<td>外键 FK → t_admin_user.id</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>DATETIME</td>
+<td>否</td>
+<td>当前时间</td>
+<td>更新时间</td>
+</tr>
+</tbody>
+</table>
+<p>索引：PK(id)；UK(config_key)。</p>
+<p>约定：t_app_config 只存非敏感配置；LLM_API_KEY 仍只保存在服务端 .env，不入库、不入仓库。应用启动时"环境变量优先，库表配置覆盖默认值"。</p>
+<h2>3.3 物理结构设计</h2>
+<ol>
+<li><strong>存储引擎与字符集</strong>：全部表 InnoDB、utf8mb4、utf8mb4_unicode_ci；</li>
+<li><strong>空间估算</strong>：按日均 100 次核查、每条记录平均 2 断言 6 证据估算，单条记录约 8 KB，年增约 300 MB，MySQL 免费方案余量充足；</li>
+<li><strong>索引策略</strong>：所有查询走索引——记录列表按 checked_at 倒序、结论筛选走 conclusion_type、域名匹配走 t_evidence.domain 与 t_source_registry 唯一键；</li>
+<li><strong>分区与归档</strong>：t_check_record 数据量增大后按月份归档，查询优先命中近 90 天；</li>
+<li><strong>SQLite 兼容</strong>：本地开发用 SQLite 3，JSON 列退化为 TEXT，由 SQLAlchemy 类型适配，DDL 见附录 B（MySQL 版）。</li>
+</ol>
+<h1>4 运用设计</h1>
+<h2>4.1 数据字典设计</h2>
+<p>关键字段取值字典：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>取值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>conclusion_type</td>
+<td>true / false / partial / unknown</td>
+<td>确认属实 / 确认不实 / 部分属实 / 暂无法核实</td>
+</tr>
+<tr>
+<td>authority_level</td>
+<td>3 / 2 / 1 / 0</td>
+<td>高（判定加权）/ 中（参考）/ 低（弱参考）/ 黑名单（排除）</td>
+</tr>
+<tr>
+<td>status</td>
+<td>1 / 0</td>
+<td>启用 / 停用（软删除）</td>
+</tr>
+<tr>
+<td>role</td>
+<td>admin / operator</td>
+<td>超级管理员 / 运维员</td>
+</tr>
+<tr>
+<td>category</td>
+<td>官方政府 / 官方媒体 / 医疗机构 / 国际组织 / 百科 / 专业媒体 / 社区 / 谣言站点</td>
+<td>证据源类别</td>
+</tr>
+</tbody>
+</table>
+<p>完整字段字典见 3.2 各表结构。</p>
+<h2>4.2 安全保密设计</h2>
+<ol>
+<li><strong>口令安全</strong>：管理员口令 bcrypt 加盐哈希存储，登录失败 5 次锁定 15 分钟；</li>
+<li><strong>接口鉴权</strong>：/api/admin/* 全部要求管理员令牌，令牌有效期 2 小时；</li>
+<li><strong>密钥隔离</strong>：LLM 密钥只在服务端 .env，不落库、不进仓库、不出现在日志；</li>
+<li><strong>隐私最小化</strong>：核查记录只存 client_id 匿名标识，不采集账号、IP 等个人信息；</li>
+<li><strong>备份与恢复</strong>：MySQL 每日自动备份（托管平台能力），恢复演练随迭代二上线执行一次；</li>
+<li><strong>删除策略</strong>：管理后台删除记录采用软删除（status=0），30 天后由清理任务物理删除，保证误删可恢复。</li>
+</ol>
+<h1>附录 A 对象关系映射（ORM）</h1>
+<p>实体类与库表的映射关系（Python / SQLAlchemy 2.0，迭代二数据层）：</p>
+<table>
+<thead>
+<tr>
+<th>实体类（Python）</th>
+<th>库表</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CheckRecord</td>
+<td>t_check_record</td>
+<td>对应报告对象 Report 的持久化形态</td>
+</tr>
+<tr>
+<td>Claim</td>
+<td>t_claim</td>
+<td>一条断言</td>
+</tr>
+<tr>
+<td>Evidence</td>
+<td>t_evidence</td>
+<td>对应首版 searcher.Source 的落库形态</td>
+</tr>
+<tr>
+<td>SourceRegistry</td>
+<td>t_source_registry</td>
+<td>证据源注册表</td>
+</tr>
+<tr>
+<td>AdminUser</td>
+<td>t_admin_user</td>
+<td>管理员账号</td>
+</tr>
+<tr>
+<td>AppConfig</td>
+<td>t_app_config</td>
+<td>系统配置键值</td>
+</tr>
+</tbody>
+</table>
+<p>映射示例（SQLAlchemy 声明式）：</p>
+<pre><code class="language-python">from sqlalchemy import String, Text, BigInteger, ForeignKey, DateTime
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+class Base(DeclarativeBase):
+    pass
+
+class CheckRecord(Base):
+    __tablename__ = &quot;t_check_record&quot;
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    raw_text: Mapped[str] = mapped_column(Text)
+    conclusion: Mapped[str] = mapped_column(String(16))
+    conclusion_type: Mapped[str] = mapped_column(String(8), index=True)
+    summary: Mapped[str] = mapped_column(String(500))
+    used_llm: Mapped[bool]
+    checked_at: Mapped[str] = mapped_column(DateTime, index=True)
+
+class Claim(Base):
+    __tablename__ = &quot;t_claim&quot;
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    record_id: Mapped[int] = mapped_column(ForeignKey(&quot;t_check_record.id&quot;), index=True)
+    seq_no: Mapped[int]
+    content: Mapped[str] = mapped_column(String(500))
+
+class Evidence(Base):
+    __tablename__ = &quot;t_evidence&quot;
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    claim_id: Mapped[int] = mapped_column(ForeignKey(&quot;t_claim.id&quot;), index=True)
+    record_id: Mapped[int] = mapped_column(ForeignKey(&quot;t_check_record.id&quot;), index=True)
+    title: Mapped[str] = mapped_column(String(200))
+    url: Mapped[str] = mapped_column(String(500))
+    url_hash: Mapped[str] = mapped_column(String(32), unique=True)
+    domain: Mapped[str] = mapped_column(String(128), index=True)
+    authority_level: Mapped[int]
+</code></pre>
+<p>映射要点：类名驼峰 ↔ 表名下划线由 ORM 显式声明；首版的 Source（title/url/snippet/domain）在落库时增加 url_hash 与 authority_level 快照，字段一一对应，见附录 B 建表脚本。</p>
+<h1>附录 B 建表脚本（MySQL 8.0，节选）</h1>
+<pre><code class="language-sql">CREATE DATABASE IF NOT EXISTS factlens
+  DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE factlens;
+
+CREATE TABLE t_check_record (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  client_id CHAR(36) NULL,
+  raw_text TEXT NOT NULL,
+  conclusion VARCHAR(16) NOT NULL,
+  conclusion_type VARCHAR(8) NOT NULL,
+  summary VARCHAR(500) NOT NULL,
+  reason VARCHAR(500) NOT NULL,
+  support_json JSON NULL,
+  against_json JSON NULL,
+  uncertainties_json JSON NULL,
+  claim_count TINYINT NOT NULL DEFAULT 1,
+  source_count SMALLINT NOT NULL DEFAULT 0,
+  used_llm TINYINT(1) NOT NULL DEFAULT 0,
+  llm_model VARCHAR(64) NULL,
+  request_id CHAR(32) NULL,
+  checked_at DATETIME NOT NULL,
+  status TINYINT NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_checked_at (checked_at),
+  INDEX idx_conclusion_type (conclusion_type),
+  INDEX idx_client_id (client_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE t_claim (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  record_id BIGINT NOT NULL,
+  seq_no TINYINT NOT NULL DEFAULT 1,
+  content VARCHAR(500) NOT NULL,
+  INDEX idx_record_id (record_id),
+  UNIQUE KEY uk_record_seq (record_id, seq_no)
+) ENGINE=InnoDB;
+
+CREATE TABLE t_evidence (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  claim_id BIGINT NOT NULL,
+  record_id BIGINT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  url VARCHAR(500) NOT NULL,
+  url_hash CHAR(32) NOT NULL,
+  snippet VARCHAR(1000) NULL,
+  domain VARCHAR(128) NOT NULL,
+  authority_level TINYINT NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_url_hash (url_hash),
+  INDEX idx_claim_id (claim_id),
+  INDEX idx_record_id (record_id),
+  INDEX idx_domain (domain)
+) ENGINE=InnoDB;
+
+CREATE TABLE t_source_registry (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  domain VARCHAR(128) NOT NULL,
+  category VARCHAR(32) NOT NULL,
+  authority_level TINYINT NOT NULL DEFAULT 1,
+  status TINYINT NOT NULL DEFAULT 1,
+  note VARCHAR(500) NULL,
+  updated_by BIGINT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_domain (domain),
+  INDEX idx_level_status (authority_level, status)
+) ENGINE=InnoDB;
+
+CREATE TABLE t_admin_user (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(32) NOT NULL,
+  password_hash VARCHAR(128) NOT NULL,
+  role VARCHAR(16) NOT NULL DEFAULT 'admin',
+  status TINYINT NOT NULL DEFAULT 1,
+  last_login_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_username (username)
+) ENGINE=InnoDB;
+
+CREATE TABLE t_app_config (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  config_key VARCHAR(64) NOT NULL,
+  config_value VARCHAR(500) NOT NULL,
+  description VARCHAR(200) NULL,
+  updated_by BIGINT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_config_key (config_key)
+) ENGINE=InnoDB;
+</code></pre>
+</body>
+</html>

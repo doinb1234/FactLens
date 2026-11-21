@@ -15,7 +15,7 @@
 | UML / ER 图（PNG 与 PlantUML 源） | [docs/design/assets/](docs/design/assets/) |
 | 交付页（GitHub Pages 门户） | [docs/index.html](docs/index.html) |
 
-开启 GitHub Pages：仓库 Settings → Pages → Source 选 `Deploy from a branch` → 分支 `main`、目录 `/docs`，保存后访问 `https://yyue62353-lab.github.io/FactLens/`。
+开启 GitHub Pages：仓库 Settings → Pages → Source 选 `Deploy from a branch` → 分支 `main`、目录 `/docs`，保存后访问 `https://doinb1234.github.io/FactLens/`。
 
 需求说明见 [docs/requirements.md](docs/requirements.md)，验收记录见 [docs/acceptance.md](docs/acceptance.md)。
 

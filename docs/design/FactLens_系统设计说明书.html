@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>FactLens 事实透镜</title><style>
+@page { size: A4; margin: 22mm 18mm 20mm 18mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "SimSun", "Songti SC", "NSimSun", serif;
+  font-size: 10.5pt; line-height: 1.78; color: #1c1c1c;
+  counter-reset: figcnt tblcnt;
+}
+h1, h2, h3, h4 { font-family: "Microsoft YaHei", "SimHei", sans-serif; color: #0f3d38; }
+h1 {
+  font-size: 16pt; margin: 0 0 14px; padding-bottom: 7px;
+  border-bottom: 2.5px solid #0f766e; page-break-before: always; page-break-after: avoid;
+}
+h1.first { page-break-before: avoid; }
+h2 { font-size: 13.5pt; margin: 18px 0 9px; page-break-after: avoid; }
+h3 { font-size: 12pt; margin: 14px 0 7px; page-break-after: avoid; }
+h4 { font-size: 11pt; margin: 11px 0 6px; page-break-after: avoid; }
+p { margin: 6px 0; text-align: justify; }
+ul, ol { margin: 6px 0 6px 1.6em; padding: 0; }
+li { margin: 3px 0; }
+table {
+  width: 100%; border-collapse: collapse; margin: 10px 0;
+  font-size: 9pt; page-break-inside: avoid;
+}
+th { background: #e8f5f3; font-family: "Microsoft YaHei"; font-weight: 700; }
+th, td { border: 1px solid #a8bcb9; padding: 4.5px 7px; text-align: left; vertical-align: top; }
+tr { page-break-inside: avoid; }
+td.center, th.center { text-align: center; }
+code {
+  font-family: Consolas, "Courier New", monospace; font-size: 8.8pt;
+  background: #f3f6f6; padding: 1px 4px; border-radius: 3px; color: #0f766e;
+}
+pre {
+  background: #f6f8f8; border: 1px solid #dbe5e3; border-radius: 6px;
+  padding: 10px 12px; font-size: 8.8pt; line-height: 1.5; overflow-x: hidden;
+  page-break-inside: avoid;
+}
+pre code { background: none; padding: 0; color: #234; }
+figure { margin: 12px 0; text-align: center; page-break-inside: avoid; }
+figure img { max-width: 100%; }
+figcaption {
+  font-family: "Microsoft YaHei"; font-size: 9pt; color: #4a5a58; margin-top: 5px;
+}
+figcaption::before { counter-increment: figcnt; content: "图 " counter(figcnt) "  "; font-weight: 700; }
+strong { color: #0f3d38; }
+a { color: #0f766e; text-decoration: none; }
+blockquote { margin: 8px 0; padding: 6px 14px; background: #f0f7f6; border-left: 4px solid #0f766e; color: #345; }
+hr { border: none; border-top: 1px dashed #b9c8c5; margin: 16px 0; }
+
+/* ---------- 封面 ---------- */
+.cover { text-align: center; page-break-after: always; padding-top: 130px; }
+.cover .logo-title { font-family: "Microsoft YaHei"; font-size: 26pt; font-weight: 800; color: #0f3d38; margin-bottom: 6px; }
+.cover .logo-sub { font-size: 12pt; color: #56706c; margin-bottom: 90px; }
+.cover .doc-type {
+  font-family: "Microsoft YaHei"; font-size: 30pt; font-weight: 800; letter-spacing: 6px;
+  color: #0f766e; margin-bottom: 8px;
+}
+.cover .doc-en { font-size: 10.5pt; color: #89a09c; margin-bottom: 110px; }
+.cover table { width: 62%; margin: 0 auto; border: none; font-size: 10.5pt; }
+.cover table td { border: none; padding: 7px 10px; text-align: left; }
+.cover table td.k { text-align: right; color: #56706c; width: 34%; font-family: "Microsoft YaHei"; }
+.cover table td.v { font-family: "Microsoft YaHei"; font-weight: 700; }
+
+/* ---------- 目录 ---------- */
+.toc { page-break-after: always; }
+.toc h1 { border: none; }
+.toc ul { list-style: none; margin-left: 0; }
+.toc ul ul { margin-left: 1.4em; }
+.toc li { margin: 5px 0; }
+.toc .lvl1 { font-family: "Microsoft YaHei"; font-weight: 700; }
+.toc .lvl2 { color: #456; font-size: 10pt; }
+</style></head>
+<body>
+
+<div class="cover">
+  <div class="logo-title">FactLens 事实透镜</div>
+  <div class="logo-sub">AI 多领域虚假信息鉴别智能体</div>
+  <div class="doc-type">系统设计说明书</div>
+  <div class="doc-en">System Design Specification</div>
+  <table>
+    <tr><td class="k">项目名称</td><td class="v"></td></tr>
+    <tr><td class="k">文档版本</td><td class="v">V1.0</td></tr>
+    <tr><td class="k">编制日期</td><td class="v">2026-11-22</td></tr>
+    <tr><td class="k">团队名称</td><td class="v">FactLens</td></tr>
+    <tr><td class="k">所属课程</td><td class="v">广东工业大学计算机学院 · 计科 24 级 56 班 · 软件工程</td></tr>
+    <tr><td class="k">指导教师</td><td class="v">flowet</td></tr>
+    <tr><td class='k'>团队成员</td><td class='v'>3224004156－刘心怡</td></tr><tr><td class='k'>团队成员</td><td class='v'>3224004158－杨添媛</td></tr><tr><td class='k'>团队成员</td><td class='v'>3224004157－吴纯瑶</td></tr><tr><td class='k'>团队成员</td><td class='v'>3224004155－李晨昀</td></tr><tr><td class='k'>团队成员</td><td class='v'>3124004111－依木拉木·阿不都苏力</td></tr><tr><td class='k'>团队成员</td><td class='v'>3124004121－艾力夏提·艾海买提</td></tr><tr><td class='k'>团队成员</td><td class='v'>3124004146－杨宗林</td></tr>
+  </table>
+</div>
+
+<div class="toc"><h1>目 录</h1><ul><li class="lvl1">1 引言</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1 编写目的</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2 项目背景</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3 术语与缩写定义</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.4 参考资料</li><li class="lvl1">2 总体设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1 需求规定</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1 首版功能需求（F01～F08）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2 迭代二新增需求（R01～R05）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.3 设计约束</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.4 需求用例模型</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.2 运行环境</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3 基本设计概念和处理流程</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3.1 智能体核查流水线</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3.2 降级策略</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3.3 四值结论定义</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3.4 核查业务流程（活动图）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4 系统结构</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4.1 功能模块划分</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4.2 功能结构思维导图</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4.3 分层架构</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4.4 类设计（系统结构）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5 功能需求与模块的关系</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.6 人工处理过程</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.7 尚未解决的问题</li><li class="lvl1">3 接口设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1 用户接口</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 前台页面</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.2 后台管理页面（迭代二）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3 界面规范</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2 外部接口</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 POST /api/check —— 提交文本核查</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.2 GET /api/health —— 健康检查</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3 迭代二后台接口规划（/api/admin/）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.4 LLM 外部接口（OpenAI 兼容）</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.5 必应检索接口</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3 内部接口</li><li class="lvl1">4 运行设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1 运行模块组合</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2 运行控制</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3 运行时间</li><li class="lvl1">5 系统数据结构设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.1 逻辑结构设计要点</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.2 物理结构设计要点</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3 数据结构与程序的关系</li><li class="lvl1">6 系统出错处理设计</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.1 出错信息</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2 补救措施</li><li class="lvl2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.3 系统维护设计</li><li class="lvl1">附录 A 设计图汇总</li></ul></div>
+<!-- title: FactLens 事实透镜 -->
+<!-- subtitle: AI 多领域虚假信息鉴别智能体 -->
+<!-- doctype: 系统设计说明书 -->
+<!-- doctype_en: System Design Specification -->
+<!-- version: V1.0 -->
+<!-- date: 2026-11-22 -->
+<!-- team: FactLens -->
+<!-- course: 广东工业大学计算机学院 · 计科 24 级 56 班 · 软件工程 -->
+<!-- teacher: flowet -->
+<!-- members: 3224004156－刘心怡 | 3224004158－杨添媛 | 3224004157－吴纯瑶 | 3224004155－李晨昀 | 3124004111－依木拉木·阿不都苏力 | 3124004121－艾力夏提·艾海买提 | 3124004146－杨宗林 -->
+
+<h1 class="first">1 引言</h1>
+<h2>1.1 编写目的</h2>
+<p>本文档是 FactLens 事实透镜（AI 多领域虚假信息鉴别智能体）的系统设计说明书，对应软件工程课程第二次团队作业（原型设计 + 概要设计）的概要设计部分，依据 GB/T 8567—2006《计算机软件文档编制规范》中概要设计说明书的编制要求编写。</p>
+<p>本文档的预期读者与用途如下：</p>
+<table>
+<thead>
+<tr>
+<th>读者</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>课程教师与助教</td>
+<td>评审系统设计的完整性与规范性</td>
+</tr>
+<tr>
+<td>团队全体成员</td>
+<td>作为迭代二编码、测试与集成的共同依据</td>
+</tr>
+<tr>
+<td>后续维护者</td>
+<td>了解系统结构、接口约定与出错处理策略</td>
+</tr>
+</tbody>
+</table>
+<p>本文档从架构的角度自顶向下描述 FactLens 的功能模块划分、运行逻辑、接口设计与数据结构设计：先给出总体结构与处理流程，再逐层细化到模块、接口与数据，为下一阶段的编码实现打下基础。</p>
+<h2>1.2 项目背景</h2>
+<p>FactLens 是一个中文信息核查网站。用户把一段拿不准真假的文字粘贴进网页，系统经过"断言拆解 → 证据检索 → 结论判定 → 报告输出"的智能体流水线，输出一份可复核的核查报告：报告说明系统如何判断、判断时参考了哪些来源、哪些地方仍需要核实。</p>
+<p>项目已按迭代计划完成首版开发并部署上线：前端使用 Vue 3 + Vite 构建，托管于 Cloudflare Pages（factlens-dn7.pages.dev）；后端使用 Python FastAPI 实现，通过 WSGI 部署于 PythonAnywhere（factlens.pythonanywhere.com），对外提供 POST /api/check 与 GET /api/health 两个接口。首版的八项功能（F01～F08）已通过线上验收，验收记录见团队仓库 docs/acceptance.md。</p>
+<p>本次作业的设计在首版成果基础上完成以下两件事：</p>
+<ol>
+<li><strong>设计定型</strong>：用 UML 与分层架构把首版"跑通"的系统结构显式化、规范化，为迭代二编码提供依据；</li>
+<li><strong>演进设计</strong>：规划迭代二新增内容，包括核查记录服务端持久化（首版历史记录仅存浏览器本地）、证据源注册表、管理后台及其鉴权接口。</li>
+</ol>
+<h2>1.3 术语与缩写定义</h2>
+<p>按编制规范要求，本文档使用的全部缩写与术语在此事先定义：</p>
+<table>
+<thead>
+<tr>
+<th>缩写/术语</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI</td>
+<td>Artificial Intelligence，人工智能</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>Large Language Model，大语言模型。本系统通过 OpenAI 兼容接口调用，默认使用智谱 GLM-4.7-flash</td>
+</tr>
+<tr>
+<td>API</td>
+<td>Application Programming Interface，应用程序编程接口</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>JavaScript Object Notation，本系统前后端与外部服务的通用数据交换格式</td>
+</tr>
+<tr>
+<td>REST</td>
+<td>Representational State Transfer，本系统接口遵循的 HTTP 风格约定</td>
+</tr>
+<tr>
+<td>HTTP(S)</td>
+<td>超文本传输协议（安全版），前端与后端、后端与外部服务的通信协议</td>
+</tr>
+<tr>
+<td>CORS</td>
+<td>Cross-Origin Resource Sharing，跨域资源共享。后端已配置允许前端跨域调用</td>
+</tr>
+<tr>
+<td>WSGI</td>
+<td>Web Server Gateway Interface，Python Web 应用部署标准。PythonAnywhere 通过 WSGI 入口挂载 FastAPI 应用</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>Object-Relational Mapping，对象关系映射。迭代二数据层采用 SQLAlchemy 实现实体类与库表的映射</td>
+</tr>
+<tr>
+<td>SQL</td>
+<td>Structured Query Language，结构化查询语言</td>
+</tr>
+<tr>
+<td>PK / FK / UK</td>
+<td>主键 / 外键 / 唯一键（数据库约束）</td>
+</tr>
+<tr>
+<td>CRUD</td>
+<td>Create/Read/Update/Delete，增删改查</td>
+</tr>
+<tr>
+<td>SPA</td>
+<td>Single Page Application，单页应用。前台与后台原型均为单页应用</td>
+</tr>
+<tr>
+<td>F01～F08</td>
+<td>首版八项功能需求编号，见 2.1.1</td>
+</tr>
+<tr>
+<td>R01～R05</td>
+<td>迭代二新增需求编号，见 2.1.2</td>
+</tr>
+<tr>
+<td>M1～M7</td>
+<td>功能模块编号，见 2.4.1</td>
+</tr>
+<tr>
+<td>断言</td>
+<td>从原文中拆解出的、可独立查证的一项事实陈述</td>
+</tr>
+<tr>
+<td>证据/来源</td>
+<td>为断言检索到的网页来源，含标题、链接、摘要、域名四个要素</td>
+</tr>
+<tr>
+<td>四值结论</td>
+<td>系统结论仅取四种之一：确认属实、确认不实、部分属实、暂无法核实</td>
+</tr>
+<tr>
+<td>降级判定</td>
+<td>未配置 LLM 密钥时，由"搜索 + 启发式规则"完成拆解与判定，结论偏保守</td>
+</tr>
+<tr>
+<td>权威域名</td>
+<td>官方政府、官方媒体、医疗机构等可信域名（如 gov.cn、people.com.cn），判定时加权</td>
+</tr>
+<tr>
+<td>核查记录</td>
+<td>一次完整核查的存档：原文、结论、断言、证据与时间</td>
+</tr>
+<tr>
+<td>BJT</td>
+<td>北京时间（UTC+8）。系统统一以北京时间标记核查时间</td>
+</tr>
+</tbody>
+</table>
+<h2>1.4 参考资料</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>资料</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[1]</td>
+<td>课程作业要求：第二次团队作业（原型设计+概要设计），edu.cnblogs.com/campus/gdgy/Class56-Grade2024-CS/homework/16784</td>
+</tr>
+<tr>
+<td>[2]</td>
+<td>第一次团队作业：FactLens 团队展示、选题报告与需求分析（团队博客）</td>
+</tr>
+<tr>
+<td>[3]</td>
+<td>团队代码仓库：github.com/yyue62353-lab/FactLens（含 docs/requirements.md 需求说明、docs/acceptance.md 验收记录）</td>
+</tr>
+<tr>
+<td>[4]</td>
+<td>GB/T 8567—2006 计算机软件文档编制规范</td>
+</tr>
+<tr>
+<td>[5]</td>
+<td>GB/T 9385—2008 计算机软件需求规格说明规范</td>
+</tr>
+<tr>
+<td>[6]</td>
+<td>线上系统：factlens-dn7.pages.dev（前端）、factlens.pythonanywhere.com（后端）</td>
+</tr>
+<tr>
+<td>[7]</td>
+<td>FastAPI 官方文档、Vue 3 官方文档</td>
+</tr>
+</tbody>
+</table>
+<h1>2 总体设计</h1>
+<h2>2.1 需求规定</h2>
+<h3>2.1.1 首版功能需求（F01～F08）</h3>
+<p>首版需求已在第一次团队作业中完成分析与验收，本文档仅列出编号与要点，作为设计约束：</p>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>功能</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F01</td>
+<td>输入</td>
+<td>输入一段文字并提交；接口拒绝空白与超出 2000 字的输入</td>
+</tr>
+<tr>
+<td>F02</td>
+<td>断言拆解</td>
+<td>先把原文拆成 1～3 条可分别查证的说法；模型不可用时按句切分</td>
+</tr>
+<tr>
+<td>F03</td>
+<td>证据检索</td>
+<td>每条断言检索一组来源，保留标题、链接、摘要、域名</td>
+</tr>
+<tr>
+<td>F04</td>
+<td>综合判定</td>
+<td>输出四值结论之一，并给出理由与不确定因素</td>
+</tr>
+<tr>
+<td>F05</td>
+<td>报告展示与复制</td>
+<td>查看、复制含摘要、理由、支持、反驳与不确定因素的报告</td>
+</tr>
+<tr>
+<td>F06</td>
+<td>来源复核</td>
+<td>点击来源标题打开原网页核对上下文；来源按 URL 去重</td>
+</tr>
+<tr>
+<td>F07</td>
+<td>历史记录</td>
+<td>刷新后仍能查找、删除记录或用原文重新核查（首版存浏览器本地）</td>
+</tr>
+<tr>
+<td>F08</td>
+<td>时间与调用状态</td>
+<td>报告标注北京时间与判定方式（模型/降级）</td>
+</tr>
+</tbody>
+</table>
+<h3>2.1.2 迭代二新增需求（R01～R05）</h3>
+<p>针对首版遗留问题与设计文档要求，迭代二规划新增：</p>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>新增需求</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R01</td>
+<td>核查记录服务端持久化</td>
+<td>核查报告落库（t_check_record 等六张表），F07 由浏览器本地存储迁移至服务端数据库，历史记录跨设备可见</td>
+</tr>
+<tr>
+<td>R02</td>
+<td>管理后台</td>
+<td>管理员登录、数据概览、核查记录管理、证据源注册表管理、系统参数配置（见 3.1.2）</td>
+</tr>
+<tr>
+<td>R03</td>
+<td>证据源注册表参与判定</td>
+<td>将权威域名表由代码内硬编码（_AUTHORITY_HINTS）演进为数据库中的 t_source_registry 表，由管理员维护，降级判定与来源排序统一读取该表</td>
+</tr>
+<tr>
+<td>R04</td>
+<td>断言级证据展示完善</td>
+<td>首版 F06 的摘要尚按全部来源汇总展示，迭代二改为按单条断言分组展示摘要（前端报告卡片已按此设计）</td>
+</tr>
+<tr>
+<td>R05</td>
+<td>报告导出</td>
+<td>在"复制报告"基础上支持导出带来源清单的文本/Markdown 报告</td>
+</tr>
+</tbody>
+</table>
+<h3>2.1.3 设计约束</h3>
+<ol>
+<li>结论取值只能是四值结论之一，任何情况下不得编造证据；</li>
+<li>原文长度不超过 2000 字，断言不超过 3 条，每条断言检索结果默认不超过 4 条；</li>
+<li>运行环境为免费/低配托管（Cloudflare Pages、PythonAnywhere 免费方案），设计需保持轻量：请求无状态、无长驻后台任务；</li>
+<li>LLM 密钥只在服务端配置，前端与代码仓库不出现密钥；</li>
+<li>所有时间以北京时间（UTC+8）标记。</li>
+</ol>
+<h3>2.1.4 需求用例模型</h3>
+<p>用例图从需求分析角度给出系统边界与两类参与者（核查用户、管理员）的用例关系：</p>
+<figure><img src="assets/usecase.png" alt="FactLens 用例图"><figcaption>FactLens 用例图</figcaption></figure>
+<p>用例说明：</p>
+<table>
+<thead>
+<tr>
+<th>用例</th>
+<th>参与者</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提交文本核查</td>
+<td>核查用户</td>
+<td>输入文字并提交，触发"断言拆解、证据检索、综合判定"三个包含用例</td>
+</tr>
+<tr>
+<td>查看核查报告</td>
+<td>核查用户</td>
+<td>阅读结论、理由、断言与来源；可扩展出"复制报告"</td>
+</tr>
+<tr>
+<td>复核证据来源</td>
+<td>核查用户</td>
+<td>点击来源链接回到原网页核对</td>
+</tr>
+<tr>
+<td>管理历史记录</td>
+<td>核查用户</td>
+<td>搜索、删除历史记录或用原文重新核查</td>
+</tr>
+<tr>
+<td>登录管理后台</td>
+<td>管理员</td>
+<td>迭代二新增，鉴权后进入后台</td>
+</tr>
+<tr>
+<td>查看数据概览 / 管理核查记录 / 管理证据源注册表 / 配置系统参数</td>
+<td>管理员</td>
+<td>迭代二新增的后台运维用例</td>
+</tr>
+</tbody>
+</table>
+<h2>2.2 运行环境</h2>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>运行环境</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客户端</td>
+<td>现代浏览器（Chrome / Edge / Firefox）</td>
+<td>加载静态前端页面，本地存储历史记录（迭代二迁移服务端）</td>
+</tr>
+<tr>
+<td>前端托管</td>
+<td>Cloudflare Pages</td>
+<td>从团队 GitHub 仓库构建 Vue 3 + Vite 产物</td>
+</tr>
+<tr>
+<td>后端运行</td>
+<td>PythonAnywhere（Python 3.12 + WSGI）</td>
+<td>FastAPI 应用；模型凭证只在服务端配置</td>
+</tr>
+<tr>
+<td>外部服务</td>
+<td>LLM API（OpenAI 兼容，默认智谱 open.bigmodel.cn）、必应检索（cn.bing.com）</td>
+<td>见 3.2.4、3.2.5</td>
+</tr>
+<tr>
+<td>数据存储</td>
+<td>迭代二：PythonAnywhere MySQL 8.0；本地开发用 SQLite</td>
+<td>由 SQLAlchemy ORM 屏蔽差异</td>
+</tr>
+</tbody>
+</table>
+<p>系统部署视图如下：</p>
+<figure><img src="assets/deployment.png" alt="FactLens 系统部署图"><figcaption>FactLens 系统部署图</figcaption></figure>
+<h2>2.3 基本设计概念和处理流程</h2>
+<h3>2.3.1 智能体核查流水线</h3>
+<p>系统的核心是一个四阶段智能体流水线，与首版实现一一对应：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>职责</th>
+<th>实现位置（首版）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 断言拆解</td>
+<td>把原文拆成 1～3 条可独立查证的断言</td>
+<td>llm.decompose_claims / _clean_claims 规则降级</td>
+</tr>
+<tr>
+<td>2 证据检索</td>
+<td>逐条断言检索网页证据，保留标题、链接、摘要、域名</td>
+<td>searcher.search_assertion（必应）</td>
+</tr>
+<tr>
+<td>3 综合判定</td>
+<td>依据证据给出四值结论、理由、支持/反驳要点、不确定因素</td>
+<td>llm.judge / _judge_no_llm 规则降级</td>
+</tr>
+<tr>
+<td>4 报告输出</td>
+<td>汇总去重来源，组装核查报告 JSON</td>
+<td>agent.check 返回结构</td>
+</tr>
+</tbody>
+</table>
+<h3>2.3.2 降级策略</h3>
+<p>系统设计上保证<strong>服务永远可用</strong>：当 LLM 密钥未配置或调用失败时，自动降级——</p>
+<ul>
+<li>拆解降级：按句读切分原文，取 1～3 条长度 6～60 字的句子作为断言；</li>
+<li>判定降级：对来源做"相关性过滤 → 权威域名加权 → 方向词统计"，只采信与断言真正相关的来源，证据不足即输出"暂无法核实"；</li>
+<li>降级报告的结论偏保守，并明确标注"未配置大模型密钥，采用保守判定"。</li>
+</ul>
+<h3>2.3.3 四值结论定义</h3>
+<table>
+<thead>
+<tr>
+<th>结论</th>
+<th>conclusion_type</th>
+<th>判定语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>确认属实</td>
+<td>true</td>
+<td>多条相关权威来源方向一致支持，无反驳</td>
+</tr>
+<tr>
+<td>确认不实</td>
+<td>false</td>
+<td>多条相关权威来源方向一致反驳</td>
+</tr>
+<tr>
+<td>部分属实</td>
+<td>partial</td>
+<td>原文多项断言有真有假，或证据方向混杂</td>
+</tr>
+<tr>
+<td>暂无法核实</td>
+<td>unknown</td>
+<td>证据不足或方向不明确，不做强判定</td>
+</tr>
+</tbody>
+</table>
+<h3>2.3.4 核查业务流程（活动图）</h3>
+<figure><img src="assets/activity.png" alt="FactLens 核查业务流程活动图"><figcaption>FactLens 核查业务流程活动图</figcaption></figure>
+<p>流程要点（与上图泳道一致）：</p>
+<ol>
+<li><strong>用户/前端</strong>：输入文本，前端先行校验空白与 2000 字上限，通过后提交 POST /api/check；</li>
+<li><strong>接口层</strong>：服务端独立复校验（不信任前端），非法输入返回 400 与具体说明；</li>
+<li><strong>编排层</strong>：LLM 可用则模型拆解断言，否则规则分句；逐断言检索证据；LLM 可用则模型判定，否则启发式规则判定；最后汇总去重来源、生成报告；</li>
+<li><strong>数据层</strong>：迭代二将核查记录落库；</li>
+<li><strong>前端</strong>：渲染报告并把记录写入历史（迭代二改由服务端持久化）。</li>
+</ol>
+<h2>2.4 系统结构</h2>
+<h3>2.4.1 功能模块划分</h3>
+<p>系统自顶向下划分为七个功能模块：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>名称</th>
+<th>职责</th>
+<th>对应需求</th>
+<th>主要实现位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>输入与校验</td>
+<td>文本输入、长度计数、空白/超长拦截、示例填入、防重复提交</td>
+<td>F01</td>
+<td>src/App.vue、app.main</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>断言拆解</td>
+<td>模型拆解或规则分句，输出 1～3 条断言</td>
+<td>F02</td>
+<td>app/llm.py、app/agent.py</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>证据检索</td>
+<td>必应检索、结果解析、来源去重</td>
+<td>F03、F06</td>
+<td>app/searcher.py</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>综合判定</td>
+<td>模型判定或规则降级，输出四值结论与理由</td>
+<td>F04</td>
+<td>app/llm.py、app/agent.py</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>报告生成与展示</td>
+<td>报告组装、前端渲染、复制、断言级证据展示</td>
+<td>F05、R04、R05</td>
+<td>app/agent.py、src/App.vue</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>历史记录</td>
+<td>记录搜索/删除/重新核查（迭代二服务端持久化）</td>
+<td>F07、R01</td>
+<td>src/App.vue、数据层</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>管理后台</td>
+<td>登录、概览、记录管理、证据源注册表、系统配置</td>
+<td>R02、R03</td>
+<td>后台 SPA、/api/admin/*</td>
+</tr>
+</tbody>
+</table>
+<h3>2.4.2 功能结构思维导图</h3>
+<figure><img src="assets/mindmap.png" alt="FactLens 功能模块思维导图"><figcaption>FactLens 功能模块思维导图</figcaption></figure>
+<h3>2.4.3 分层架构</h3>
+<p>系统采用五层架构，自顶向下依赖，层间通过接口解耦：</p>
+<figure><img src="assets/architecture.png" alt="FactLens 分层架构图"><figcaption>FactLens 分层架构图</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>职责</th>
+<th>关键构件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表现层</td>
+<td>用户交互与结果展示，不包含核查逻辑</td>
+<td>Vue 3 前台（核查页/历史/关于）与后台管理 SPA</td>
+</tr>
+<tr>
+<td>接口层</td>
+<td>参数校验、路由分发、错误码转换</td>
+<td>FastAPI：POST /api/check、GET /api/health、迭代二 /api/admin/*</td>
+</tr>
+<tr>
+<td>编排层</td>
+<td>流水线编排与降级控制</td>
+<td>FactCheckOrchestrator（首版为 agent.check 函数）</td>
+</tr>
+<tr>
+<td>能力层</td>
+<td>可替换的外部能力封装</td>
+<td>LLM 客户端、必应搜索客户端、规则降级引擎、配置</td>
+</tr>
+<tr>
+<td>数据层</td>
+<td>持久化与实体映射（迭代二新增）</td>
+<td>SQLAlchemy ORM、MySQL 8.0 / SQLite</td>
+</tr>
+</tbody>
+</table>
+<p>数据流向（一次核查）：表现层 → 接口层 → 编排层（依次调用能力层的模型/搜索/规则）→ 数据层落库 → 逐层返回报告 JSON → 表现层渲染。</p>
+<h3>2.4.4 类设计（系统结构）</h3>
+<p>类图描述各层核心类/类型及其关系。其中 CheckRequest、HealthResponse、Source、Config 为首版已有类型；编排层四个构件为首版 agent 模块函数在迭代二的对象化重构；数据层六类为迭代二新增 ORM 实体：</p>
+<figure><img src="assets/class.png" alt="FactLens 类图"><figcaption>FactLens 类图</figcaption></figure>
+<p>关键设计说明：</p>
+<ol>
+<li><strong>判定策略</strong>：Judge 为抽象策略，ModelJudge 调用 LLM 客户端，RuleJudge 依赖 Config 的权威域名表（迭代二改读 t_source_registry）；编排层按"LLM 是否可用"选择策略，与首版 <code>llm.available()</code> 分支一一对应；</li>
+<li><strong>数据关联</strong>：一次核查记录（CheckRecord）拆解出 1～3 条断言（Claim），每条断言检索到 0～n 条证据（Evidence），证据同时冗余关联记录便于统计；</li>
+<li><strong>Source</strong> 是检索结果的值对象，落库时映射为 Evidence。</li>
+</ol>
+<h2>2.5 功能需求与模块的关系</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>M1</th>
+<th>M2</th>
+<th>M3</th>
+<th>M4</th>
+<th>M5</th>
+<th>M6</th>
+<th>M7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F01 输入</td>
+<td>●</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>F02 断言拆解</td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>F03 证据检索</td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>F04 综合判定</td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>F05 报告展示与复制</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>F06 来源复核</td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>F07 历史记录</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+</tr>
+<tr>
+<td>F08 时间与调用状态</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>R01 记录持久化</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td>●</td>
+<td></td>
+</tr>
+<tr>
+<td>R02 管理后台</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+</tr>
+<tr>
+<td>R03 证据源注册表</td>
+<td></td>
+<td></td>
+<td>●</td>
+<td>●</td>
+<td></td>
+<td></td>
+<td>●</td>
+</tr>
+<tr>
+<td>R04 断言级证据展示</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>R05 报告导出</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>●</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>2.6 人工处理过程</h2>
+<p>本系统仍需少量人工环节，设计中予以明确：</p>
+<table>
+<thead>
+<tr>
+<th>人工环节</th>
+<th>责任人</th>
+<th>频率</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>证据源注册表维护</td>
+<td>管理员</td>
+<td>按需</td>
+<td>在后台新增/停用域名，维护权威等级与黑名单，供判定加权使用</td>
+</tr>
+<tr>
+<td>核查结论复核</td>
+<td>用户</td>
+<td>每次</td>
+<td>报告仅供辅助判断，重要信息须由用户点击来源自行复核</td>
+</tr>
+<tr>
+<td>模型提示词维护</td>
+<td>后端组</td>
+<td>版本迭代时</td>
+<td>调整拆解/判定提示词，用同一组例句回归对比</td>
+</tr>
+<tr>
+<td>密钥与配置管理</td>
+<td>后端组</td>
+<td>按需</td>
+<td>在服务端 .env 维护 LLM 密钥，不进入代码仓库</td>
+</tr>
+</tbody>
+</table>
+<h2>2.7 尚未解决的问题</h2>
+<ol>
+<li>公网 WSGI 入口文件尚未纳入团队仓库，存在部署文档与代码不一致的风险（迭代二补录）；</li>
+<li>必应检索结果与断言的相关性仍靠关键词命中判断，存在不相关来源混入的可能（迭代二引入注册表加权与相关性过滤）；</li>
+<li>管理后台鉴权方案（会话/令牌）待迭代二实现时确定；</li>
+<li>免费托管平台对长请求与流量的限制，可能影响大规模使用下的稳定性。</li>
+</ol>
+<h1>3 接口设计</h1>
+<h2>3.1 用户接口</h2>
+<h3>3.1.1 前台页面</h3>
+<table>
+<thead>
+<tr>
+<th>页面</th>
+<th>入口</th>
+<th>主要元素与交互规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核查页（首页）</td>
+<td>#home</td>
+<td>输入框（≤2000 字，实时计数）、三个示例一键填入、开始核查按钮（空输入禁用）；提交后显示四步进度（拆解→检索→判定→报告）；报告卡片含结论徽章、摘要、理由、支持/反驳/不确定三栏、断言级证据、全部来源、复制与重新核查按钮</td>
+</tr>
+<tr>
+<td>历史记录页</td>
+<td>#history</td>
+<td>搜索框按原文关键词过滤；记录卡片含时间、原文截断、结论徽章；支持重新核查（回填原文并自动提交）与删除；一键清空；空状态引导</td>
+</tr>
+<tr>
+<td>关于页</td>
+<td>#about</td>
+<td>项目简介、六项核心功能、核查原则（证据说话/不足即言明/可复核/区分权威/透明告知）、首版局限声明</td>
+</tr>
+</tbody>
+</table>
+<p>交互规则补充：</p>
+<ol>
+<li>结论徽章颜色语义统一：确认属实=绿、确认不实=红、部分属实=琥珀、暂无法核实=灰，前台后台一致；</li>
+<li>报告必须标注判定方式：模型判定（蓝色徽章）或降级判定（灰色徽章 + 琥珀色提示条）；</li>
+<li>所有异步操作用 toast 轻提示反馈，不做阻断式弹窗；</li>
+<li>核查中禁用提交按钮，防止重复请求。</li>
+</ol>
+<h3>3.1.2 后台管理页面（迭代二）</h3>
+<table>
+<thead>
+<tr>
+<th>页面</th>
+<th>入口</th>
+<th>主要元素与交互规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>管理员登录</td>
+<td>/admin</td>
+<td>账号密码登录；鉴权失败提示；演示版提示</td>
+</tr>
+<tr>
+<td>数据概览</td>
+<td>#overview</td>
+<td>四张统计卡（今日核查/累计核查/模型判定占比/平均耗时）、近 7 日核查量折线图、结论分布环形图、最近核查记录表</td>
+</tr>
+<tr>
+<td>核查记录</td>
+<td>#records</td>
+<td>结论类型筛选 + 关键词查询；表格列出时间/原文/结论/断言数/来源数/判定方式；详情抽屉展示完整报告；删除需二次确认</td>
+</tr>
+<tr>
+<td>证据源管理</td>
+<td>#sources</td>
+<td>三类统计卡；注册表表格（域名/类别/权威等级/状态开关/备注）；新增/编辑弹窗表单；等级四档：高/中/低/黑名单</td>
+</tr>
+<tr>
+<td>系统配置</td>
+<td>#config</td>
+<td>模型配置（接口地址/模型名/密钥掩码显示）、检索参数（结果数/超时）、服务状态卡（健康检查、模型可用性、重新检查）、保存配置</td>
+</tr>
+</tbody>
+</table>
+<h3>3.1.3 界面规范</h3>
+<p>原型采用"青绿透镜"设计语言：主色 #0F766E～#14B8A6 渐变，白色卡片 + 1px 灰边框 + 轻投影；字号以 13～15px 为主；所有数据列表支持空状态展示。前台原型与后台原型详见《FactLens 交互原型》（在线预览链接见博客）。</p>
+<h2>3.2 外部接口</h2>
+<h3>3.2.1 POST /api/check —— 提交文本核查</h3>
+<p>请求（JSON）：</p>
+<pre><code class="language-json">{ &quot;text&quot;: &quot;地球是太阳系的一颗行星。&quot; }
+</code></pre>
+<p>成功响应（JSON，字段含义见表）：</p>
+<pre><code class="language-json">{
+  &quot;conclusion&quot;: &quot;确认属实&quot;,
+  &quot;conclusion_type&quot;: &quot;true&quot;,
+  &quot;summary&quot;: &quot;原文只有一项核心断言……&quot;,
+  &quot;reason&quot;: &quot;断言唯一且边界清晰……&quot;,
+  &quot;support&quot;: [&quot;维基百科：地球是太阳系中……&quot;],
+  &quot;against&quot;: [],
+  &quot;uncertainties&quot;: [&quot;不同来源对行星分类的历史表述存在差异……&quot;],
+  &quot;claims&quot;: [
+    { &quot;claim&quot;: &quot;地球是太阳系的一颗行星。&quot;,
+      &quot;sources&quot;: [ { &quot;title&quot;: &quot;地球 - 维基百科&quot;, &quot;url&quot;: &quot;https://zh.wikipedia.org/wiki/地球&quot;, &quot;snippet&quot;: &quot;地球是太阳系中由内及外的第三颗行星……&quot;, &quot;domain&quot;: &quot;zh.wikipedia.org&quot; } ] }
+  ],
+  &quot;sources&quot;: [ { &quot;title&quot;: &quot;地球 - 维基百科&quot;, &quot;url&quot;: &quot;…&quot;, &quot;snippet&quot;: &quot;…&quot;, &quot;domain&quot;: &quot;zh.wikipedia.org&quot; } ],
+  &quot;checked_at&quot;: &quot;2026-11-21 20:14&quot;,
+  &quot;used_llm&quot;: true
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>conclusion</td>
+<td>string</td>
+<td>四值结论中文名</td>
+</tr>
+<tr>
+<td>conclusion_type</td>
+<td>string</td>
+<td>true / false / partial / unknown，供前端映射颜色</td>
+</tr>
+<tr>
+<td>summary</td>
+<td>string</td>
+<td>整体分析摘要</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>string</td>
+<td>判定理由（依据了哪些证据）</td>
+</tr>
+<tr>
+<td>support / against / uncertainties</td>
+<td>string[]</td>
+<td>支持/反驳要点、不确定因素</td>
+</tr>
+<tr>
+<td>claims</td>
+<td>array</td>
+<td>断言及其各自来源（claims[].sources）</td>
+</tr>
+<tr>
+<td>sources</td>
+<td>array</td>
+<td>全部来源，已按 URL 去重</td>
+</tr>
+<tr>
+<td>checked_at</td>
+<td>string</td>
+<td>核查时间（北京时间）</td>
+</tr>
+<tr>
+<td>used_llm</td>
+<td>boolean</td>
+<td>是否模型判定</td>
+</tr>
+</tbody>
+</table>
+<p>错误响应：空白输入与超长输入返回 HTTP 400（"待核查内容不能为空" / "内容过长，请控制在 2000 字以内"）；核查过程异常返回 HTTP 500（"核查过程出错：…"）。</p>
+<h3>3.2.2 GET /api/health —— 健康检查</h3>
+<p>返回服务状态与配置的模型名称，不执行真实核查：</p>
+<pre><code class="language-json">{ &quot;status&quot;: &quot;ok&quot;, &quot;used_llm&quot;: true, &quot;model&quot;: &quot;glm-4.7-flash&quot; }
+</code></pre>
+<h3>3.2.3 迭代二后台接口规划（/api/admin/*）</h3>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>方法</th>
+<th>用途</th>
+<th>鉴权</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/api/admin/login</td>
+<td>POST</td>
+<td>管理员登录，换取令牌</td>
+<td>公开</td>
+</tr>
+<tr>
+<td>/api/admin/overview</td>
+<td>GET</td>
+<td>概览统计（总量/趋势/结论分布）</td>
+<td>管理员令牌</td>
+</tr>
+<tr>
+<td>/api/admin/records</td>
+<td>GET</td>
+<td>分页查询核查记录（结论、关键词筛选）</td>
+<td>管理员令牌</td>
+</tr>
+<tr>
+<td>/api/admin/records/{id}</td>
+<td>GET / DELETE</td>
+<td>记录详情 / 删除</td>
+<td>管理员令牌</td>
+</tr>
+<tr>
+<td>/api/admin/source-registry</td>
+<td>GET / POST / PUT / DELETE</td>
+<td>证据源注册表 CRUD</td>
+<td>管理员令牌</td>
+</tr>
+<tr>
+<td>/api/admin/config</td>
+<td>GET / PUT</td>
+<td>读取/保存系统参数</td>
+<td>管理员令牌</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2.4 LLM 外部接口（OpenAI 兼容）</h3>
+<ul>
+<li>调用方式：HTTP POST <code>{LLM_BASE_URL}/chat/completions</code>，Bearer 密钥鉴权；</li>
+<li>请求体：model（默认 glm-4.7-flash）、messages、temperature（拆解 0.1 / 判定 0.2）、max_tokens（1200～2000）；</li>
+<li>拆解与判定均要求模型只输出 JSON，由 _chat_json 清洗围栏并解析；</li>
+<li>超时 60 秒；HTTP 非 200 或解析失败时抛异常，由编排层捕获后整体降级；</li>
+<li>密钥未配置时 llm.available() 为 false，接口层与前端不感知，直接进入降级路径。</li>
+</ul>
+<h3>3.2.5 必应检索接口</h3>
+<ul>
+<li>调用方式：HTTP GET cn.bing.com/search?q=&lt;断言&gt;，携带桌面浏览器 User-Agent 与中文语言头；</li>
+<li>解析规则：按 <code>li.b_algo</code> 结果块提取标题、跳转链接（还原真实 URL）、摘要；</li>
+<li>超时 20 秒，失败返回空来源列表（不中断核查）；</li>
+<li>每条断言默认取前 4 条（SEARCH_RESULTS_PER_CLAIM 可配置）。</li>
+</ul>
+<h2>3.3 内部接口</h2>
+<table>
+<thead>
+<tr>
+<th>接口（函数）</th>
+<th>所在模块</th>
+<th>输入 → 输出</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>check(text)</td>
+<td>app.agent</td>
+<td>text → 报告 dict</td>
+<td>流水线编排入口，唯一被接口层调用</td>
+</tr>
+<tr>
+<td>_clean_claims(text)</td>
+<td>app.agent</td>
+<td>text → list[str]</td>
+<td>规则分句降级</td>
+</tr>
+<tr>
+<td>_judge_no_llm(text, evidence)</td>
+<td>app.agent</td>
+<td>→ 判定 dict</td>
+<td>启发式降级判定</td>
+</tr>
+<tr>
+<td>_dedup_sources(sources)</td>
+<td>app.agent</td>
+<td>→ list[dict]</td>
+<td>按 URL 去重</td>
+</tr>
+<tr>
+<td>available()</td>
+<td>app.llm</td>
+<td>→ bool</td>
+<td>密钥是否配置</td>
+</tr>
+<tr>
+<td>_chat / _chat_json(messages)</td>
+<td>app.llm</td>
+<td>→ str / dict</td>
+<td>原始调用与 JSON 调用</td>
+</tr>
+<tr>
+<td>decompose_claims(text)</td>
+<td>app.llm</td>
+<td>→ list[str] 或 None</td>
+<td>模型拆解，不可用返回 None</td>
+</tr>
+<tr>
+<td>judge(text, claims_evidence)</td>
+<td>app.llm</td>
+<td>→ dict 或 None</td>
+<td>模型判定，不可用返回 None</td>
+</tr>
+<tr>
+<td>search(query, num)</td>
+<td>app.searcher</td>
+<td>→ list[Source]</td>
+<td>必应检索</td>
+</tr>
+<tr>
+<td>search_assertion(assertion)</td>
+<td>app.searcher</td>
+<td>→ {query, sources}</td>
+<td>单断言检索</td>
+</tr>
+<tr>
+<td>数据层仓库接口（迭代二）</td>
+<td>数据层</td>
+<td>CRUD</td>
+<td>CheckRecordRepository、SourceRegistryRepository 等，供编排层与后台调用</td>
+</tr>
+</tbody>
+</table>
+<p>约定：能力层函数失败时不向调用方抛不可控异常——检索失败返回空列表，模型失败返回 None，由编排层统一降级处理。</p>
+<h1>4 运行设计</h1>
+<h2>4.1 运行模块组合</h2>
+<table>
+<thead>
+<tr>
+<th>运行模块</th>
+<th>运行形态</th>
+<th>组合说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>前端静态站点</td>
+<td>Cloudflare Pages 静态资源</td>
+<td>浏览器加载后以 SPA 运行，通过 HTTPS 调用后端</td>
+</tr>
+<tr>
+<td>后端服务</td>
+<td>PythonAnywhere WSGI 单进程</td>
+<td>FastAPI 应用 + 数据库连接池；无长驻后台任务，请求即来即处理</td>
+</tr>
+<tr>
+<td>外部服务</td>
+<td>公网 HTTP 调用</td>
+<td>LLM API 与必应检索均按需调用，均有超时与失败兜底</td>
+</tr>
+</tbody>
+</table>
+<h2>4.2 运行控制</h2>
+<p>一次核查请求的控制流与时序如下（时序图描述重要的算法模块——智能体核查流水线）：</p>
+<figure><img src="assets/sequence.png" alt="FactLens 核查流程时序图"><figcaption>FactLens 核查流程时序图</figcaption></figure>
+<p>对象间消息传递与协作关系如下（协作图，消息编号与时序图一致）：</p>
+<figure><img src="assets/collaboration.png" alt="FactLens 核查流程协作图"><figcaption>FactLens 核查流程协作图</figcaption></figure>
+<p>运行控制要点：</p>
+<ol>
+<li>前端防抖：核查进行中禁用提交，避免重复请求；</li>
+<li>降级控制：编排层在拆解与判定两个决策点检查 llm.available()，形成"模型路径/规则路径"双轨；</li>
+<li>兜底控制：接口层捕获一切未处理异常并转换为 HTTP 500 说明，前端永不看到崩溃页；</li>
+<li>状态可观测：每次报告携带 used_llm 与 checked_at，请求可经 request_id（迭代二）关联服务端日志。</li>
+</ol>
+<h2>4.3 运行时间</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>预期耗时</th>
+<th>超时/上限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入校验</td>
+<td>&lt; 1 ms</td>
+<td>—</td>
+</tr>
+<tr>
+<td>断言拆解（模型）</td>
+<td>3～8 s</td>
+<td>60 s</td>
+</tr>
+<tr>
+<td>证据检索（每条断言）</td>
+<td>1～5 s</td>
+<td>20 s</td>
+</tr>
+<tr>
+<td>综合判定（模型）</td>
+<td>5～12 s</td>
+<td>60 s</td>
+</tr>
+<tr>
+<td>报告组装与落库</td>
+<td>&lt; 1 s</td>
+<td>—</td>
+</tr>
+<tr>
+<td>端到端（模型模式）</td>
+<td>目标 ≤ 15 s</td>
+<td>视托管平台限制</td>
+</tr>
+<tr>
+<td>端到端（降级模式）</td>
+<td>目标 ≤ 25 s</td>
+<td>视托管平台限制</td>
+</tr>
+</tbody>
+</table>
+<p>性能设计：请求无状态、可水平扩展；迭代二将逐断言检索改为并发执行；前端保持单请求单报告，减少冗余调用。</p>
+<h1>5 系统数据结构设计</h1>
+<h2>5.1 逻辑结构设计要点</h2>
+<p>核心数据对象及其逻辑关系：</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>关键属性</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核查记录 CheckRecord</td>
+<td>原文、结论、摘要、理由、支持/反驳/不确定（JSON）、时间、判定方式</td>
+<td>1 条记录拆出 1～3 条断言</td>
+</tr>
+<tr>
+<td>断言 Claim</td>
+<td>内容、序号</td>
+<td>1 条断言对应 0～n 条证据</td>
+</tr>
+<tr>
+<td>证据 Evidence</td>
+<td>标题、URL、摘要、域名、权威等级</td>
+<td>由来源值对象 Source 落库而来</td>
+</tr>
+<tr>
+<td>证据源注册表 SourceRegistry</td>
+<td>域名、类别、权威等级、状态、备注</td>
+<td>与证据按域名匹配（非强制关联）</td>
+</tr>
+<tr>
+<td>管理员 AdminUser</td>
+<td>账号、口令哈希、角色、状态</td>
+<td>维护注册表与配置</td>
+</tr>
+<tr>
+<td>系统配置 AppConfig</td>
+<td>键、值、说明</td>
+<td>键值对，覆盖 Config 默认值</td>
+</tr>
+</tbody>
+</table>
+<p>首版历史记录存于浏览器 localStorage（键 factlens_history_v1，数组元素含原文、结论、时间）；迭代二迁移至 t_check_record，localStorage 仅作离线缓存。</p>
+<h2>5.2 物理结构设计要点</h2>
+<ol>
+<li>数据库：线上 MySQL 8.0（PythonAnywhere 提供），本地开发 SQLite，由 SQLAlchemy ORM 屏蔽差异；</li>
+<li>字符集 utf8mb4，排序规则 utf8mb4_unicode_ci，存储引擎 InnoDB；</li>
+<li>主键均为 BIGINT 自增；证据 URL 建立 url_hash 唯一索引防重；记录表建 (checked_at) 与 (conclusion_type) 索引支撑后台统计；断言/证据按外键建索引；</li>
+<li>报告中的支持/反驳/不确定要点以 JSON 列存储，避免过度拆表；原文 TEXT、摘要 VARCHAR(500)；</li>
+<li>详细设计见《FactLens 数据库设计说明书》。</li>
+</ol>
+<h2>5.3 数据结构与程序的关系</h2>
+<p>各模块对数据结构的访问关系：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>访问的数据结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2/M3/M4 编排层</td>
+<td>内存对象：断言列表、来源列表、判定 dict（不直接碰库）</td>
+</tr>
+<tr>
+<td>M5 报告生成</td>
+<td>组装报告 dict；迭代二经 ReportBuilder 落库 t_check_record/t_claim/t_evidence</td>
+</tr>
+<tr>
+<td>M6 历史记录</td>
+<td>迭代二读 t_check_record（前端 localStorage 为缓存）</td>
+</tr>
+<tr>
+<td>M7 管理后台</td>
+<td>t_admin_user、t_check_record、t_source_registry、t_app_config</td>
+</tr>
+<tr>
+<td>判定降级（RuleJudge）</td>
+<td>读 t_source_registry 权威域名（迭代二）</td>
+</tr>
+</tbody>
+</table>
+<p>类图见 2.4.4，实体与库表的对象关系映射详见《FactLens 数据库设计说明书》附录 A。</p>
+<h1>6 系统出错处理设计</h1>
+<h2>6.1 出错信息</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>表现</th>
+<th>用户看到的信息</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空白输入</td>
+<td>前端拦截 / 后端 400</td>
+<td>"待核查内容不能为空"</td>
+</tr>
+<tr>
+<td>超过 2000 字</td>
+<td>前端计数变红 / 后端 400</td>
+<td>"内容过长，请控制在 2000 字以内"</td>
+</tr>
+<tr>
+<td>LLM 密钥未配置</td>
+<td>自动降级</td>
+<td>报告标注"降级判定"，琥珀色提示条</td>
+</tr>
+<tr>
+<td>LLM 调用超时/失败</td>
+<td>编排层捕获，走降级</td>
+<td>同上；健康检查接口可查看 used_llm</td>
+</tr>
+<tr>
+<td>检索超时/失败</td>
+<td>返回空来源</td>
+<td>报告"暂无来源"，结论多为"暂无法核实"</td>
+</tr>
+<tr>
+<td>后端未处理异常</td>
+<td>接口层兜底</td>
+<td>HTTP 500："核查过程出错：…"</td>
+</tr>
+<tr>
+<td>网络不通</td>
+<td>前端请求失败</td>
+<td>toast 提示"网络异常，请稍后重试"</td>
+</tr>
+</tbody>
+</table>
+<h2>6.2 补救措施</h2>
+<ol>
+<li><strong>双轨降级</strong>：任何模型环节失败都自动切换到规则路径，保证核查流程完整跑通；</li>
+<li><strong>失败隔离</strong>：检索失败不中断核查；单条断言无结果时继续其余断言；</li>
+<li><strong>幂等与重试</strong>：前端防重复提交；用户可点击"重新核查"再次提交；</li>
+<li><strong>可观测</strong>：used_llm 字段 + 健康检查接口，运维可快速判断是否配置异常。</li>
+</ol>
+<h2>6.3 系统维护设计</h2>
+<ol>
+<li><strong>配置维护</strong>：服务端 .env（LLM_API_KEY、LLM_BASE_URL、LLM_MODEL、SEARCH_RESULTS_PER_CLAIM），修改后重启 WSGI 生效；迭代二改由后台"系统配置"页维护；</li>
+<li><strong>日志维护</strong>：后端记录请求日志，迭代二引入 request_id 串联一次核查的全部调用；</li>
+<li><strong>数据维护</strong>：MySQL 每日自动备份（PythonAnywhere 托管能力），t_check_record 按月归档；</li>
+<li><strong>发布维护</strong>：前端由 Cloudflare Pages 监听仓库自动构建；后端以仓库为唯一代码源，WSGI 入口文件补录仓库后统一维护。</li>
+</ol>
+<h1>附录 A 设计图汇总</h1>
+<table>
+<thead>
+<tr>
+<th>图</th>
+<th>章节</th>
+<th>文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用例图</td>
+<td>2.1.4</td>
+<td>assets/usecase.png</td>
+</tr>
+<tr>
+<td>部署图</td>
+<td>2.2</td>
+<td>assets/deployment.png</td>
+</tr>
+<tr>
+<td>活动图</td>
+<td>2.3.4</td>
+<td>assets/activity.png</td>
+</tr>
+<tr>
+<td>功能模块思维导图</td>
+<td>2.4.2</td>
+<td>assets/mindmap.png</td>
+</tr>
+<tr>
+<td>分层架构图</td>
+<td>2.4.3</td>
+<td>assets/architecture.png</td>
+</tr>
+<tr>
+<td>类图</td>
+<td>2.4.4</td>
+<td>assets/class.png</td>
+</tr>
+<tr>
+<td>时序图</td>
+<td>4.2</td>
+<td>assets/sequence.png</td>
+</tr>
+<tr>
+<td>协作图</td>
+<td>4.2</td>
+<td>assets/collaboration.png</td>
+</tr>
+<tr>
+<td>ER 图与数据库设计</td>
+<td>另册</td>
+<td>见《FactLens 数据库设计说明书》</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

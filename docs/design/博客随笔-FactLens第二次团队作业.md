@@ -29,7 +29,7 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 按要求使用专用原型工具 **墨刀** 完成原型制作，同时将同一设计实现为可在线交互的 HTML 高保真原型，双链接供评审：
 
 - **墨刀原型（在线预览）**：【墨刀链接占位-待替换】（复刻完成后替换；页面稿与复刻步骤见团队仓库 `docs/modao/墨刀复刻指南.md`）
-- **HTML 交互原型（在线预览）**：https://yyue62353-lab.github.io/FactLens/prototype/index.html （前台）· https://yyue62353-lab.github.io/FactLens/prototype/admin.html （后台）
+- **HTML 交互原型（在线预览）**：https://doinb1234.github.io/FactLens/prototype/index.html （前台）· https://doinb1234.github.io/FactLens/prototype/admin.html （后台）
 
 原型尺寸 1440×900，采用"青绿透镜"设计语言：主色 #0F766E→#14B8A6 渐变、白色卡片、结论四色徽章（属实绿 / 不实红 / 部分属实琥珀 / 无法核实灰），前台后台视觉一致。
 
@@ -39,21 +39,21 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 
 **页面 1 · 核查页（首页）**：主标题"让真相，清晰一点。"；输入卡片支持 ≤2000 字实时计数、三个示例一键填入；"开始核查"按钮在空输入时禁用。
 
-![前台原型-核查页](https://yyue62353-lab.github.io/FactLens/design/assets/shots/front-home.png)
+![前台原型-核查页](https://doinb1234.github.io/FactLens/design/assets/shots/front-home.png)
 
 **核查中过渡态**：提交后展示四步流水线进度——1 拆解断言 → 2 检索证据 → 3 综合判定 → 4 生成报告，当前步骤呼吸高亮，配以阶段文字提示。这一步把"看不见的智能体流水线"做成了可见的过程。
 
 **页面 2 · 核查报告页**：结论大胶囊（颜色随四值结论变化）、"模型判定/降级判定"徽章、核查时间；摘要与判断理由；支持/反驳/不确定三栏证据要点；**断言级证据链**——每条断言一张卡片，下面挂该断言检索到的来源（标题可点击、域名、摘要）；全部来源汇总（按 URL 去重）；复制报告、重新核查按钮；降级判定时显示琥珀色提示条。
 
-![前台原型-核查报告页](https://yyue62353-lab.github.io/FactLens/design/assets/shots/front-report.png)
+![前台原型-核查报告页](https://doinb1234.github.io/FactLens/design/assets/shots/front-report.png)
 
 **页面 3 · 历史记录页**：按关键词搜索、删除、清空；每条记录带时间、原文与结论徽章；"重新核查"回填原文并自动提交。首版存浏览器本地，迭代二迁移服务端数据库（见 3.3）。
 
-![前台原型-历史记录页](https://yyue62353-lab.github.io/FactLens/design/assets/shots/front-history.png)
+![前台原型-历史记录页](https://doinb1234.github.io/FactLens/design/assets/shots/front-history.png)
 
 **页面 4 · 关于页**：项目简介、六项核心功能、五条核查原则（证据说话/不足即言明/可复核/区分权威/透明告知）与首版局限的如实声明。
 
-![前台原型-关于页](https://yyue62353-lab.github.io/FactLens/design/assets/shots/front-about.png)
+![前台原型-关于页](https://doinb1234.github.io/FactLens/design/assets/shots/front-about.png)
 
 ### 2.3 后台管理原型（迭代二新增）
 
@@ -61,23 +61,23 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 
 **登录页**：账号密码登录，演示版提示。
 
-![后台原型-登录页](https://yyue62353-lab.github.io/FactLens/design/assets/shots/admin-login.png)
+![后台原型-登录页](https://doinb1234.github.io/FactLens/design/assets/shots/admin-login.png)
 
 **数据概览**：四张统计卡（今日核查/累计核查/模型判定占比/平均耗时）；近 7 日核查量折线图；结论分布环形图；最近核查记录表。
 
-![后台原型-数据概览](https://yyue62353-lab.github.io/FactLens/design/assets/shots/admin-overview.png)
+![后台原型-数据概览](https://doinb1234.github.io/FactLens/design/assets/shots/admin-overview.png)
 
 **核查记录**：结论筛选 + 关键词查询；详情抽屉展示完整报告；删除需二次确认。
 
-![后台原型-核查记录](https://yyue62353-lab.github.io/FactLens/design/assets/shots/admin-records.png)
+![后台原型-核查记录](https://doinb1234.github.io/FactLens/design/assets/shots/admin-records.png)
 
 **证据源管理**：权威域名注册表（高/中/低/黑名单四档 + 启用开关），新增/编辑弹窗。
 
-![后台原型-证据源管理](https://yyue62353-lab.github.io/FactLens/design/assets/shots/admin-sources.png)
+![后台原型-证据源管理](https://doinb1234.github.io/FactLens/design/assets/shots/admin-sources.png)
 
 **系统配置**：模型配置（密钥掩码显示）、检索参数、服务状态卡（健康检查、模型可用性、重新检查）。
 
-![后台原型-系统配置](https://yyue62353-lab.github.io/FactLens/design/assets/shots/admin-config.png)
+![后台原型-系统配置](https://doinb1234.github.io/FactLens/design/assets/shots/admin-config.png)
 
 ### 2.4 原型中的突出特点
 
@@ -93,33 +93,33 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 
 系统自顶向下分为 **五层**：表现层（Vue 3 前台 + 后台 SPA）→ 接口层（FastAPI）→ 编排层（智能体流水线）→ 能力层（LLM 客户端 / 必应检索 / 规则降级引擎）→ 数据层（迭代二新增 SQLAlchemy + MySQL/SQLite）。层间单向依赖、接口解耦；模型与搜索能力可替换，无密钥时自动降级，保证**服务永远可用**。
 
-![FactLens 分层架构图](https://yyue62353-lab.github.io/FactLens/design/assets/architecture.png)
+![FactLens 分层架构图](https://doinb1234.github.io/FactLens/design/assets/architecture.png)
 
 功能模块划分 M1～M7：输入与校验（M1）、断言拆解（M2）、证据检索（M3）、综合判定（M4）、报告生成与展示（M5）、历史记录（M6）、管理后台（M7）。思维导图如下：
 
-![FactLens 功能模块思维导图](https://yyue62353-lab.github.io/FactLens/design/assets/mindmap.png)
+![FactLens 功能模块思维导图](https://doinb1234.github.io/FactLens/design/assets/mindmap.png)
 
 ### 3.2 UML 设计
 
 **用例图（需求分析）**：两类参与者——核查用户（访客）与管理员。"提交文本核查"包含"断言拆解、证据检索、综合判定"三个用例；"查看核查报告"扩展"复制报告"；管理员对应后台登录与四项运维用例。
 
-![FactLens 用例图](https://yyue62353-lab.github.io/FactLens/design/assets/usecase.png)
+![FactLens 用例图](https://doinb1234.github.io/FactLens/design/assets/usecase.png)
 
 **活动图（业务流程）**：描述一次核查的端到端流程——前后端双重校验输入 → 拆解（模型路径/规则降级路径）→ 逐断言检索 → 判定（模型/规则双轨）→ 汇总去重 → 生成报告 → 落库与展示。图中用泳道区分用户、前端、接口层、编排层、数据层的职责。
 
-![FactLens 核查业务流程活动图](https://yyue62353-lab.github.io/FactLens/design/assets/activity.png)
+![FactLens 核查业务流程活动图](https://doinb1234.github.io/FactLens/design/assets/activity.png)
 
 **类图（系统结构）**：按五层给出核心类。编排层四构件（ClaimSplitter / EvidenceRetriever / Judge / ReportBuilder）对应首版 agent 模块的对象化重构；Judge 为抽象策略，ModelJudge 调用 LLM 客户端、RuleJudge 读权威域名表；数据层六类为迭代二 ORM 实体，与数据库表一一对应。
 
-![FactLens 类图](https://yyue62353-lab.github.io/FactLens/design/assets/class.png)
+![FactLens 类图](https://doinb1234.github.io/FactLens/design/assets/class.png)
 
 **时序图（核心算法模块）**：智能体核查流水线是系统的核心算法。时序图描述一次 POST /api/check 的控制流：双重校验 → 编排层依次调用拆解、检索、判定，两处 LLM 决策点带降级分支 → 报告组装落库 → 前端渲染与历史持久化。
 
-![FactLens 核查流程时序图](https://yyue62353-lab.github.io/FactLens/design/assets/sequence.png)
+![FactLens 核查流程时序图](https://doinb1234.github.io/FactLens/design/assets/sequence.png)
 
 **协作图（对象协作）**：展示八个对象之间 15 条消息的传递方向与编号，与时序图编号一致，直观呈现"前端 → 接口层 → 编排层 → 能力层 → 报告对象"的协作关系。
 
-![FactLens 核查流程协作图](https://yyue62353-lab.github.io/FactLens/design/assets/collaboration.png)
+![FactLens 核查流程协作图](https://doinb1234.github.io/FactLens/design/assets/collaboration.png)
 
 ### 3.3 数据库设计
 
@@ -127,7 +127,7 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 
 **ER 图（概念结构）**：一次核查记录拆解出 1～3 条断言，每条断言检索到多条证据；证据按域名与注册表非强制匹配（落库时保存权威等级快照）；管理员维护注册表与系统配置。
 
-![FactLens 数据库 ER 图](https://yyue62353-lab.github.io/FactLens/design/assets/er.png)
+![FactLens 数据库 ER 图](https://doinb1234.github.io/FactLens/design/assets/er.png)
 
 **关系数据模型（逻辑结构，节选）**：
 
@@ -199,10 +199,10 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 | 交付物 | 链接 |
 | --- | --- |
 | GitHub 团队仓库 | https://github.com/yyue62353-lab/FactLens |
-| FactLens_系统设计说明书.pdf | 在线预览/下载：https://yyue62353-lab.github.io/FactLens/design/FactLens_系统设计说明书.pdf |
-| FactLens_数据库设计说明书.pdf | 在线预览/下载：https://yyue62353-lab.github.io/FactLens/design/FactLens_数据库设计说明书.pdf |
+| FactLens_系统设计说明书.pdf | 在线预览/下载：https://doinb1234.github.io/FactLens/design/FactLens_系统设计说明书.pdf |
+| FactLens_数据库设计说明书.pdf | 在线预览/下载：https://doinb1234.github.io/FactLens/design/FactLens_数据库设计说明书.pdf |
 | 原型在线预览（墨刀） | 【墨刀链接占位-待替换】 |
-| 原型在线预览（HTML） | https://yyue62353-lab.github.io/FactLens/prototype/index.html |
+| 原型在线预览（HTML） | https://doinb1234.github.io/FactLens/prototype/index.html |
 | 云盘下载（备用） | 【蓝奏云链接占位-待替换，可上传两份 PDF 后补】 |
 
-> 发布说明：文中图片托管于团队仓库 GitHub Pages。若外链图显示异常，请从团队仓库 `docs/design/assets/` 下载同名图片，用博客园编辑器重新上传即可；两份 PDF 同时存放在仓库 `docs/design/` 目录。
+> 发布说明：文中图片与 PDF 通过团队仓库的镜像 fork（doinb1234/FactLens）开启的 GitHub Pages 提供在线预览，文件源在团队仓库 `docs/design/` 与 `docs/design/assets/`；若外链图显示异常，从团队仓库下载同名图片后用博客园编辑器重新上传即可。
