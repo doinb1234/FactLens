@@ -28,7 +28,7 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 
 按要求使用专用原型工具 **墨刀** 完成原型制作，同时将同一设计实现为可在线交互的 HTML 高保真原型，双链接供评审：
 
-- **墨刀原型（在线预览）**：【墨刀链接占位-待替换】（复刻完成后替换；页面稿与复刻步骤见团队仓库 `docs/modao/墨刀复刻指南.md`）
+- **墨刀原型（在线预览）**：https://modao.cc/proto/design/pb2mcpVbbL7mt5uEarUH （13 个画板：前台 5 页 + 后台 5 页 + 抽屉/删除确认/新增证据源 3 个弹层交互态，页面间通过墨刀页面导航切换）
 - **HTML 交互原型（在线预览）**：https://doinb1234.github.io/FactLens/prototype/index.html （前台）· https://doinb1234.github.io/FactLens/prototype/admin.html （后台）
 
 原型尺寸 1440×900，采用"青绿透镜"设计语言：主色 #0F766E→#14B8A6 渐变、白色卡片、结论四色徽章（属实绿 / 不实红 / 部分属实琥珀 / 无法核实灰），前台后台视觉一致。
@@ -201,7 +201,7 @@ FactLens 事实透镜是一个 **AI 多领域虚假信息鉴别智能体**：把
 | GitHub 团队仓库 | https://github.com/yyue62353-lab/FactLens |
 | FactLens_系统设计说明书.pdf | 在线预览/下载：https://doinb1234.github.io/FactLens/design/FactLens_系统设计说明书.pdf |
 | FactLens_数据库设计说明书.pdf | 在线预览/下载：https://doinb1234.github.io/FactLens/design/FactLens_数据库设计说明书.pdf |
-| 原型在线预览（墨刀） | 【墨刀链接占位-待替换】 |
+| 原型在线预览（墨刀） | https://modao.cc/proto/design/pb2mcpVbbL7mt5uEarUH |
 | 原型在线预览（HTML） | https://doinb1234.github.io/FactLens/prototype/index.html |
 | 云盘下载（备用） | 【蓝奏云链接占位-待替换，可上传两份 PDF 后补】 |
 
